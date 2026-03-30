@@ -1,0 +1,3981 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة إدارة المسابقة 🏆</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            color: #4a5568;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #4a5568;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-tab:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-tab.active {
+            background: #667eea;
+            color: white;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section-title {
+            color: #4a5568;
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            text-align: center;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+            box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3);
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 6px 20px rgba(229, 62, 62, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+            box-shadow: 0 4px 15px rgba(56, 161, 105, 0.3);
+        }
+
+        /* --- تفصيل الجولة --- */
+        .game-detail-modal .modal-content {
+            max-width: 800px;
+            width: 95%;
+        }
+        .game-stats-summary {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .stat-card {
+            flex: 1;
+            min-width: 120px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+        }
+        .stat-card .stat-num {
+            font-size: 32px;
+            font-weight: 900;
+            color: #4361ee;
+            line-height: 1;
+        }
+        .stat-card .stat-num.used-num { color: #e74c3c; }
+        .stat-card .stat-num.remain-num { color: #2ecc71; }
+        .stat-card .stat-label {
+            font-size: 13px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .category-detail-card {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+        .category-detail-card:hover { box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .category-detail-header {
+            background: linear-gradient(135deg, #4361ee, #3a0ca3);
+            color: white;
+            padding: 12px 18px;
+            font-weight: bold;
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .category-detail-header .cat-totals {
+            font-size: 13px;
+            opacity: 0.9;
+            display: flex;
+            gap: 12px;
+        }
+        .category-detail-header .cat-totals span {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        .levels-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+        }
+        .level-cell .level-title {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .level-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .level-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+        .level-bar-label {
+            width: 50px;
+            text-align: right;
+            font-size: 12px;
+            color: #555;
+        }
+        .level-bar-track {
+            flex: 1;
+            height: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .level-bar-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+        .level-bar-fill.used-bar { background: #e74c3c; }
+        .level-bar-fill.remain-bar { background: #2ecc71; }
+        .level-bar-count {
+            width: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #333;
+        }
+        .no-data-msg {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 16px;
+        }
+        .detail-loading {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            font-size: 15px;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: inherit;
+        }
+        .btn-info:hover { background-color: #138496; }
+
+                .btn-success:hover {
+            box-shadow: 0 6px 20px rgba(56, 161, 105, 0.4);
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(113, 128, 150, 0.4);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: right;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        tr:hover {
+            background-color: #f7fafc;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close:hover {
+            transform: scale(1.1);
+        }
+
+        .modal form {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #f7fafc;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .import-export-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .import-export-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .import-export-card h3 {
+            margin-bottom: 15px;
+            color: #4a5568;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .file-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+            background-color: #f7fafc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-input:hover {
+            border-color: #667eea;
+            background-color: #edf2f7;
+        }
+
+        .thumb {
+            max-width: 50px;
+            max-height: 50px;
+            border-radius: 5px;
+            object-fit: cover;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #667eea;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .question-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .question-type-option {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .question-type-option:hover {
+            border-color: #667eea;
+            background: #f7fafc;
+        }
+
+        .question-type-option.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .question-type-option input[type="radio"] {
+            display: none;
+        }
+
+        .question-type-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .question-type-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .points-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .points-option {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            font-weight: 600;
+        }
+
+        .points-option:hover {
+            border-color: #667eea;
+            background: #f7fafc;
+        }
+
+        .points-option.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .points-option input[type="radio"] {
+            display: none;
+        }
+
+        .question-fields {
+            display: none;
+        }
+
+        .question-fields.active {
+            display: block;
+        }
+
+        .blanks-container {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .blank-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .blank-item input {
+            flex: 1;
+        }
+
+        .blank-item button {
+            background: #e53e3e;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .add-blank-btn {
+            background: #38a169;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .current-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav-tab {
+                width: 200px;
+                text-align: center;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+            }
+
+            table {
+                font-size: 0.9rem;
+            }
+
+            th, td {
+                padding: 10px 8px;
+            }
+        }
+
+        /* أنماط الإعدادات */
+        .settings-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .setting-item {
+            margin-bottom: 20px;
+        }
+
+        .setting-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+
+        .setting-label input[type="checkbox"] {
+            width: auto;
+            margin-left: 12px;
+            transform: scale(1.2);
+            accent-color: #667eea;
+        }
+
+        .setting-description {
+            color: #718096;
+            font-size: 0.95rem;
+            margin-right: 30px;
+            line-height: 1.5;
+        }
+
+        .checkmark {
+            margin-right: 8px;
+        }
+
+        /* ===== خلايا المستوى قابلة للنقر ===== */
+        .level-cell {
+            padding: 14px;
+            text-align: center;
+            border-left: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s;
+            border-radius: 0;
+            position: relative;
+        }
+        .level-cell:last-child { border-left: none; }
+        .level-cell:hover {
+            background: #f0f4ff;
+        }
+        .level-cell:hover .level-title { color: #4361ee; }
+        .level-cell .click-hint {
+            font-size: 10px;
+            color: #bbb;
+            margin-top: 6px;
+            transition: color 0.2s;
+        }
+        .level-cell:hover .click-hint { color: #667eea; }
+
+        /* ===== درج أسئلة المستوى ===== */
+        .level-questions-drawer {
+            display: none;
+            grid-column: 1 / -1;
+            background: #f8f9ff;
+            border-top: 2px solid #667eea;
+            padding: 16px 18px;
+            animation: drawerSlide 0.25s ease;
+        }
+        .level-questions-drawer.open { display: block; }
+        @keyframes drawerSlide {
+            from { opacity:0; transform: translateY(-6px); }
+            to   { opacity:1; transform: translateY(0); }
+        }
+        .drawer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .drawer-title {
+            font-weight: 700;
+            font-size: 14px;
+            color: #4a5568;
+        }
+        .drawer-close {
+            cursor: pointer;
+            color: #999;
+            font-size: 18px;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+        .drawer-close:hover { color: #e53e3e; }
+        .drawer-sections {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        @media (max-width: 600px) { .drawer-sections { grid-template-columns: 1fr; } }
+        .drawer-section-title {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+        .drawer-section-title.used-title { background:#fde8e8; color:#c53030; }
+        .drawer-section-title.remain-title { background:#e6ffed; color:#276749; }
+        .drawer-q-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 5px; }
+        .drawer-q-item {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 13px;
+            color: #2d3748;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            line-height: 1.4;
+        }
+        .drawer-q-item.used-item { border-right: 3px solid #e53e3e; }
+        .drawer-q-item.remain-item { border-right: 3px solid #38a169; }
+        .drawer-q-num {
+            font-weight: 700;
+            color: #a0aec0;
+            font-size: 11px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .drawer-q-text { flex: 1; }
+        .drawer-empty { color: #a0aec0; font-size: 12px; text-align: center; padding: 10px; }
+
+        /* ===== أنماط تبويب المراجعة ===== */
+        .review-card {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            border: 2px solid #e9d8fd;
+            margin-bottom: 18px;
+            overflow: hidden;
+            transition: box-shadow 0.2s, border-color 0.2s;
+        }
+        .review-card:hover {
+            box-shadow: 0 8px 24px rgba(102,126,234,0.15);
+            border-color: #9c27b0;
+        }
+        .review-card-header {
+            background: linear-gradient(135deg, #9c27b0 0%, #673ab7 100%);
+            color: #fff;
+            padding: 12px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .review-card-header .q-meta {
+            font-size: 13px;
+            opacity: 0.85;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .review-card-header .q-meta span {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+        .review-card-body {
+            padding: 18px 20px;
+        }
+        .review-card-body .q-text {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 8px;
+        }
+        .review-card-body .q-answer {
+            color: #2f855a;
+            font-size: 0.97rem;
+            font-weight: 600;
+        }
+        .review-card-body .q-flagged-at {
+            color: #a0aec0;
+            font-size: 0.82rem;
+            margin-top: 6px;
+        }
+        .review-card-actions {
+            padding: 10px 20px 16px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .review-tab-btn { position: relative; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                🏆
+                لوحة إدارة المسابقة
+            </h1>
+            <p>إدارة شاملة للفئات والأسئلة والتصنيفات</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('categories')">الفئات</button>
+            <button class="nav-tab" onclick="showTab('category-groups')">التصنيفات</button>
+            <button class="nav-tab" onclick="showTab('import-export')">استيراد/تصدير</button>
+            <button class="nav-tab" onclick="showTab('settings')">الإعدادات</button>
+            <button class="nav-tab" onclick="showTab('statistics'); loadStatistics();">الإحصائيات</button>
+        
+  <button class="nav-tab" onclick="showTab('games'); try{ loadGamesAdmin(); }catch(e){}">جولات اللعبة</button>
+  <button class="nav-tab review-tab-btn" id="reviewTabBtn" onclick="showTab('review'); loadReviewQuestions();">مراجعة الأسئلة <span id="reviewBadge" style="display:none;background:#e53e3e;color:#fff;border-radius:50%;padding:1px 7px;font-size:12px;margin-right:5px;">0</span></button>
+</div>
+
+        <!-- تبويب الفئات -->
+        <div id="categories" class="tab-content active">
+            <div class="section-header">
+                <h2 class="section-title">إدارة الفئات</h2>
+                <button class="btn" onclick="openAddCategoryModal()">إضافة فئة جديدة</button>
+            </div>
+            <table id="categoriesTable">
+                <thead>
+                    <tr>
+                        <th>الإجراءات</th>
+                        <th>مخفية</th>
+                        <th>التصنيف</th>
+                        <th>الصورة</th>
+                        <th>الوصف</th>
+                        <th>اسم الفئة</th>
+                        <th>المعرف</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            
+            <!-- قسم عرض الأسئلة -->
+            <div id="questionsListSection" style="display: none;">
+                <button class="back-btn" onclick="hideQuestionsAndShowCategories()">← العودة للفئات</button>
+                <div class="section-header">
+                    <h2 class="section-title" id="questionsTitle">أسئلة الفئة</h2>
+                    <button class="btn" onclick="openAddQuestionModal()">إضافة سؤال جديد</button>
+                </div>
+                <table id="questionsTable">
+                    <thead>
+                        <tr>
+                            <th>الإجراءات</th>
+                            <th>صورة الإجابة</th>
+                            <th>الملاحظات</th>
+                            <th>النقاط</th>
+                            <th>الإجابة الصحيحة</th>
+                            <th>نص السؤال</th>
+                            <th>صورة السؤال</th>
+                            <th>نوع السؤال</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- تبويب التصنيفات -->
+        <div id="category-groups" class="tab-content">
+            <div class="section-header">
+                <h2 class="section-title">إدارة التصنيفات</h2>
+                <button class="btn" onclick="openAddCategoryGroupModal()">إضافة تصنيف جديد</button>
+            </div>
+            <table id="categoryGroupsTable">
+                <thead>
+                    <tr>
+                        <th>الإجراءات</th>
+                        <th>مخفي</th>
+                        <th>الوصف</th>
+                        <th>اسم التصنيف</th>
+                        <th>المعرف</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- تبويب الاستيراد والتصدير -->
+        <div id="import-export" class="tab-content">
+            <h2 class="section-title">استيراد وتصدير البيانات</h2>
+            
+            <div class="import-export-section">
+                <!-- تصدير البيانات -->
+                <div class="import-export-card">
+                    <h3>تصدير البيانات</h3>
+                    <p>تصدير الأسئلة والفئات إلى ملفات Excel</p>
+                    <div style="margin-top: 15px;">
+                        <a href="http://localhost:3001/export/questions" class="btn" style="margin-left: 10px;">تصدير الأسئلة</a>
+                        <a href="http://localhost:3001/export/categories" class="btn">تصدير الفئات</a>
+                    </div>
+                </div>
+
+                <!-- استيراد الأسئلة -->
+                <div class="import-export-card">
+                    <h3>استيراد الأسئلة</h3>
+                    <p>استيراد الأسئلة من ملف Excel</p>
+                    <form id="importQuestionsForm">
+                        <div class="file-input-wrapper">
+                            <input type="file" id="questionsFile" name="file" accept=".xlsx,.xls" class="file-input" required>
+                            <label for="questionsFile">اختر ملف Excel للأسئلة</label>
+                        </div>
+                        <button type="submit" class="btn">استيراد الأسئلة</button>
+                    </form>
+                </div>
+
+                <!-- استيراد الفئات -->
+                <div class="import-export-card">
+                    <h3>استيراد الفئات</h3>
+                    <p>استيراد الفئات من ملف Excel</p>
+                    <form id="importCategoriesForm">
+                        <div class="file-input-wrapper">
+                            <input type="file" id="categoriesFile" name="file" accept=".xlsx,.xls" class="file-input" required>
+                            <label for="categoriesFile">اختر ملف Excel للفئات</label>
+                        </div>
+                        <button type="submit" class="btn">استيراد الفئات</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- تبويب الإعدادات -->
+        <div id="settings" class="tab-content">
+            <h2 class="section-title">إعدادات النظام</h2>
+            
+            <div class="settings-section">
+                <h3 style="color: #4a5568; margin-bottom: 20px;">إعدادات عرض الفئات</h3>
+                
+                <div class="setting-item">
+                    <label class="setting-label">
+                        <input type="checkbox" id="showCategoriesWithGroups" onchange="toggleCategoriesGrouping()">
+                        <span class="checkmark"></span>
+                        عرض الفئات مجمعة حسب التصنيف
+                    </label>
+                    <p class="setting-description">
+                        عند التفعيل، ستظهر الفئات مجمعة تحت تصنيفاتها في صفحة اللعبة
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- تبويب الإحصائيات -->
+        <div id="statistics" class="tab-content">
+            <h2 class="section-title">إحصائيات الأسئلة</h2>
+            <div id="statisticsContent">
+                <p style="text-align: center; color: #718096;">جاري تحميل الإحصائيات...</p>
+            </div>
+        </div>
+
+        <!-- تبويب جولات اللعبة -->
+        <div id="games" class="tab-content">
+    <div class="section-header">
+        <h2 class="section-title">إدارة جولات اللعبة</h2>
+        <button class="btn" onclick="openAddGameModal()">إضافة جولة جديدة</button>
+    </div>
+    <table id="gamesTable">
+        <thead>
+            <tr>
+                <th>الإجراءات</th>
+                <th>تاريخ الإنشاء</th>
+                <th>اسم الجولة</th>
+                <th>المعرف</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+        <!-- تبويب مراجعة الأسئلة -->
+        <div id="review" class="tab-content">
+            <div class="section-header">
+                <h2 class="section-title">🚩 أسئلة تحتاج مراجعة</h2>
+                <button class="btn btn-danger" onclick="clearAllReviewFlags()" style="font-size:0.9rem;">🗑️ مسح الكل</button>
+            </div>
+            <p style="text-align:center;color:#718096;margin-bottom:20px;font-size:0.95rem;">
+                الأسئلة التي تم تحديدها للمراجعة أثناء اللعبة. يمكنك تعديلها أو حذفها من هنا.
+            </p>
+            <div id="reviewQuestionsContainer">
+                <div style="text-align:center;padding:40px;color:#999;">لا توجد أسئلة للمراجعة حالياً</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal تفصيل الجولة -->
+    <div id="gameDetailModal" class="modal game-detail-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="gameDetailTitle">تفصيل الجولة</h2>
+                <span class="close" onclick="closeModal('gameDetailModal')">&times;</span>
+            </div>
+            <div id="gameDetailBody">
+                <div class="detail-loading">⏳ جاري التحميل...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal إضافة/تعديل فئة -->
+    <div id="categoryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="categoryModalTitle">إضافة فئة جديدة</h2>
+                <span class="close" onclick="closeModal('categoryModal')">&times;</span>
+            </div>
+            <form id="categoryForm" enctype="multipart/form-data">
+                <input type="hidden" id="categoryId" name="id">
+                
+                <div class="form-group">
+                    <label for="categoryName">اسم الفئة:</label>
+                    <input type="text" id="categoryName" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="categoryDescription">الوصف:</label>
+                    <textarea id="categoryDescription" name="description" rows="3"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="categoryGroupId">التصنيف:</label>
+                    <select id="categoryGroupId" name="category_group_id" required>
+                        <option value="">اختر التصنيف</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="categoryImage">صورة الفئة:</label>
+                    <input type="file" id="categoryImage" name="category_image" accept="image/*">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-danger" onclick="closeModal('categoryModal')">إلغاء</button>
+                    <button type="submit" class="btn">حفظ التغييرات</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal إضافة/تعديل تصنيف -->
+    <div id="categoryGroupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="categoryGroupModalTitle">إضافة تصنيف جديد</h2>
+                <span class="close" onclick="closeModal('categoryGroupModal')">&times;</span>
+            </div>
+            <form id="categoryGroupForm">
+                <input type="hidden" id="categoryGroupId" name="id">
+                
+                <div class="form-group">
+                    <label for="categoryGroupName">اسم التصنيف:</label>
+                    <input type="text" id="categoryGroupName" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="categoryGroupDescription">الوصف:</label>
+                    <textarea id="categoryGroupDescription" name="description" rows="3"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-danger" onclick="closeModal('categoryGroupModal')">إلغاء</button>
+                    <button type="submit" class="btn">حفظ التغييرات</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal إضافة سؤال -->
+    <div id="addQuestionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">إضافة سؤال جديد</h2>
+                <span class="close" onclick="closeModal('addQuestionModal')">&times;</span>
+            </div>
+            <form id="addQuestionForm" enctype="multipart/form-data">
+                <input type="hidden" id="addQuestionCategoryId" name="category_id">
+                
+                <!-- اختيار نوع السؤال -->
+                <div class="form-group">
+                    <label>نوع السؤال:</label>
+                    <div class="question-types">
+                        <div class="question-type-option selected" data-type="normal">
+                            <input type="radio" name="question_type" value="normal" checked>
+                            <div class="question-type-icon">📝</div>
+                            <div class="question-type-name">سؤال عادي</div>
+                        </div>
+                        <div class="question-type-option" data-type="video">
+                            <input type="radio" name="question_type" value="video">
+                            <div class="question-type-icon">🎥</div>
+                            <div class="question-type-name">سؤال فيديو</div>
+                        </div>
+                        <div class="question-type-option" data-type="audio">
+                            <input type="radio" name="question_type" value="audio">
+                            <div class="question-type-icon">🎵</div>
+                            <div class="question-type-name">سؤال صوت</div>
+                        </div>
+                        <div class="question-type-option" data-type="blanks">
+                            <input type="radio" name="question_type" value="blanks">
+                            <div class="question-type-icon">📋</div>
+                            <div class="question-type-name">سؤال تدرج</div>
+                        </div>
+                        <div class="question-type-option" data-type="qr">
+                            <input type="radio" name="question_type" value="qr">
+                            <div class="question-type-icon">📱</div>
+                            <div class="question-type-name">سؤال باركود</div>
+                        </div>
+                        <div class="question-type-option" data-type="puzzle">
+                            <input type="radio" name="question_type" value="puzzle">
+                            <div class="question-type-icon">🧩</div>
+                            <div class="question-type-name">صورة متقطعة</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- اختيار النقاط -->
+                <div class="form-group">
+                    <label>عدد النقاط:</label>
+                    <div class="points-options">
+                        <div class="points-option selected" data-points="200">
+                            <input type="radio" name="points" value="200" checked>
+                            200 نقطة
+                        </div>
+                        <div class="points-option" data-points="400">
+                            <input type="radio" name="points" value="400">
+                            400 نقطة
+                        </div>
+                        <div class="points-option" data-points="600">
+                            <input type="radio" name="points" value="600">
+                            600 نقطة
+                        </div>
+                    </div>
+                </div>
+
+                <!-- حقول السؤال العادي -->
+                <div id="NormalFields" class="question-fields active">
+                    <div class="form-group">
+                        <label for="addQuestionText">نص السؤال:</label>
+                        <textarea id="addQuestionText" name="question" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addQuestionNotes">الملاحظات (اختياري):</label>
+                        <textarea id="addQuestionNotes" name="notes" placeholder="ملاحظات تظهر فوق السؤال في صفحة اللعبة"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addQuestionImage">صورة السؤال (اختياري):</label>
+                        <input type="file" id="addQuestionImage" name="question_image" accept="image/*">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addCorrectAnswer">الإجابة الصحيحة:</label>
+                        <input type="text" id="addCorrectAnswer" name="correct_answer">
+                    </div>
+                    <div class="form-group">
+                        <label for="addOption2">الخيار الثاني (اختياري):</label>
+                        <input type="text" id="addOption2" name="option2">
+                    </div>
+                    <div class="form-group">
+                        <label for="addOption3">الخيار الثالث (اختياري):</label>
+                        <input type="text" id="addOption3" name="option3">
+                    </div>
+                    <div class="form-group">
+                        <label for="addOption4">الخيار الرابع (اختياري):</label>
+                        <input type="text" id="addOption4" name="option4">
+                    </div>
+                    <div class="form-group">
+                        <label for="addCorrectAnswerImage">صورة الإجابة الصحيحة (اختياري):</label>
+                        <input type="file" id="addCorrectAnswerImage" name="correct_answer_image" accept="image/*">
+                    </div>
+                </div>
+
+                <!-- حقول السؤال الفيديو -->
+                <div id="VideoFields" class="question-fields">
+                    <div class="form-group">
+                        <label for="addVideoQuestionText">نص السؤال:</label>
+                        <textarea id="addVideoQuestionText" name="question"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addVideoQuestionNotes">الملاحظات (اختياري):</label>
+                        <textarea id="addVideoQuestionNotes" name="notes" placeholder="ملاحظات تظهر فوق السؤال في صفحة اللعبة"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addVideoQuestionImage">صورة السؤال (اختياري):</label>
+                        <input type="file" id="addVideoQuestionImage" name="question_image" accept="image/*">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addVideoCorrectAnswer">الإجابة الصحيحة:</label>
+                        <input type="text" id="addVideoCorrectAnswer" name="correct_answer">
+                    </div>
+                    <div class="form-group">
+                        <label for="addVideoQuestion">فيديو السؤال (رابط أو رفع ملف):</label>
+                        <input type="text" id="addVideoQuestion" name="video_question" placeholder="رابط YouTube أو اتركه فارغاً لرفع ملف">
+                        <input type="file" name="video_question_file" accept="video/*" style="margin-top: 10px;">
+                    </div>
+                    <div class="form-group">
+                        <label for="addVideoAnswer">فيديو الإجابة (اختياري):</label>
+                        <input type="text" id="addVideoAnswer" name="video_answer" placeholder="رابط YouTube أو اتركه فارغاً لرفع ملف">
+                        <input type="file" name="video_answer_file" accept="video/*" style="margin-top: 10px;">
+                    </div>
+                    <div class="form-group">
+                        <label for="addVideoCorrectAnswerImage">صورة الإجابة الصحيحة (اختياري):</label>
+                        <input type="file" id="addVideoCorrectAnswerImage" name="correct_answer_image" accept="image/*">
+                    </div>
+                </div>
+
+                <!-- حقول السؤال الصوتي -->
+                <div id="AudioFields" class="question-fields">
+                    <div class="form-group">
+                        <label for="addAudioQuestionText">نص السؤال:</label>
+                        <textarea id="addAudioQuestionText" name="question"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addAudioQuestionNotes">الملاحظات (اختياري):</label>
+                        <textarea id="addAudioQuestionNotes" name="notes" placeholder="ملاحظات تظهر فوق السؤال في صفحة اللعبة"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addAudioQuestionImage">صورة السؤال (اختياري):</label>
+                        <input type="file" id="addAudioQuestionImage" name="question_image" accept="image/*">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addAudioCorrectAnswer">الإجابة الصحيحة:</label>
+                        <input type="text" id="addAudioCorrectAnswer" name="correct_answer">
+                    </div>
+                    <div class="form-group">
+                        <label for="addAudioQuestion">صوت السؤال (رابط أو رفع ملف):</label>
+                        <input type="text" id="addAudioQuestion" name="audio_question" placeholder="رابط الصوت أو اتركه فارغاً لرفع ملف">
+                        <input type="file" name="audio_question_file" accept="audio/*" style="margin-top: 10px;">
+                    </div>
+                    <div class="form-group">
+                        <label for="addAudioAnswer">صوت الإجابة (اختياري):</label>
+                        <input type="text" id="addAudioAnswer" name="audio_answer" placeholder="رابط الصوت أو اتركه فارغاً لرفع ملف">
+                        <input type="file" name="audio_answer_file" accept="audio/*" style="margin-top: 10px;">
+                    </div>
+                    <div class="form-group">
+                        <label for="addAudioCorrectAnswerImage">صورة الإجابة الصحيحة (اختياري):</label>
+                        <input type="file" id="addAudioCorrectAnswerImage" name="correct_answer_image" accept="image/*">
+                    </div>
+                </div>
+
+                <!-- حقول سؤال الفراغات -->
+                <div id="BlanksFields" class="question-fields">
+                    <div class="form-group">
+                        <label for="addBlanksQuestionText">نص السؤال:</label>
+                        <textarea id="addBlanksQuestionText" name="question"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addBlanksQuestionNotes">الملاحظات (اختياري):</label>
+                        <textarea id="addBlanksQuestionNotes" name="notes" placeholder="ملاحظات تظهر فوق السؤال في صفحة اللعبة"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addBlanksQuestionImage">صورة السؤال (اختياري):</label>
+                        <input type="file" id="addBlanksQuestionImage" name="question_image" accept="image/*">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addBlanksCorrectAnswer">الإجابة الصحيحة:</label>
+                        <input type="text" id="addBlanksCorrectAnswer" name="correct_answer">
+                    </div>
+                    <div class="form-group">
+                        <label>الفراغات (تظهر تدريجياً):</label>
+                        <div class="blanks-container" id="addBlanksContainer">
+                        </div>
+                        <button type="button" class="add-blank-btn" onclick="addBlanksItem()">إضافة فراغ</button>
+                    </div>
+                    <div class="form-group">
+                        <label for="addBlanksCorrectAnswerImage">صورة الإجابة الصحيحة (اختياري):</label>
+                        <input type="file" id="addBlanksCorrectAnswerImage" name="correct_answer_image" accept="image/*">
+                    </div>
+                </div>
+
+                <!-- حقول سؤال الأحجية -->
+                <div id="PuzzleFields" class="question-fields">
+                    <div class="form-group">
+                        <label for="addPuzzleQuestionText">نص السؤال:</label>
+                        <textarea id="addPuzzleQuestionText" name="question"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addPuzzleQuestionNotes">الملاحظات (اختياري):</label>
+                        <textarea id="addPuzzleQuestionNotes" name="notes" placeholder="ملاحظات تظهر فوق السؤال في صفحة اللعبة"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addPuzzleQuestionImage">صورة السؤال (اختياري):</label>
+                        <input type="file" id="addPuzzleQuestionImage" name="question_image" accept="image/*">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addPuzzleCorrectAnswer">الإجابة الصحيحة:</label>
+                        <input type="text" id="addPuzzleCorrectAnswer" name="correct_answer">
+                    </div>
+                    <div class="form-group">
+                        <label for="addPuzzleImage">صورة الأحجية:</label>
+                        <input type="file" id="addPuzzleImage" name="puzzle_image" accept="image/*">
+                    </div>
+                    <div class="form-group">
+                        <label for="addPuzzleCorrectAnswerImage">صورة الإجابة الصحيحة (اختياري):</label>
+                        <input type="file" id="addPuzzleCorrectAnswerImage" name="correct_answer_image" accept="image/*">
+                    </div>
+                </div>
+
+                <!-- حقول سؤال QR -->
+                <div id="QrFields" class="question-fields">
+                    <div class="form-group">
+                        <label for="addQrQuestionText">نص السؤال:</label>
+                        <textarea id="addQrQuestionText" name="question"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addQrQuestionNotes">الملاحظات (اختياري):</label>
+                        <textarea id="addQrQuestionNotes" name="notes" placeholder="ملاحظات تظهر فوق السؤال في صفحة اللعبة"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addQrQuestionImage">صورة السؤال (اختياري):</label>
+                        <input type="file" id="addQrQuestionImage" name="question_image" accept="image/*">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="addQrCorrectAnswer">الإجابة الصحيحة:</label>
+                        <input type="text" id="addQrCorrectAnswer" name="correct_answer">
+                    </div>
+                    <div class="form-group">
+                        <label for="addQrCorrectAnswerImage">صورة الإجابة الصحيحة (اختياري):</label>
+                        <input type="file" id="addQrCorrectAnswerImage" name="correct_answer_image" accept="image/*">
+                    </div>
+                </div>
+
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-danger" onclick="closeModal('addQuestionModal')">إلغاء</button>
+                    <button type="submit" class="btn">إضافة السؤال</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal تعديل سؤال -->
+    <div id="editQuestionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">تعديل السؤال</h2>
+                <span class="close" onclick="closeModal('editQuestionModal')">&times;</span>
+            </div>
+            <form id="editQuestionForm" enctype="multipart/form-data">
+                <input type="hidden" id="editQuestionId" name="id">
+                <input type="hidden" id="editQuestionCategoryId" name="category_id">
+                
+                <!-- اختيار نوع السؤال -->
+                <div class="form-group">
+                    <label>نوع السؤال:</label>
+                    <div class="question-types">
+                        <div class="question-type-option" data-type="normal">
+                            <input type="radio" name="question_type" value="normal">
+                            <div class="question-type-icon">📝</div>
+                            <div class="question-type-name">سؤال عادي</div>
+                        </div>
+                        <div class="question-type-option" data-type="video">
+                            <input type="radio" name="question_type" value="video">
+                            <div class="question-type-icon">🎥</div>
+                            <div class="question-type-name">سؤال فيديو</div>
+                        </div>
+                        <div class="question-type-option" data-type="audio">
+                            <input type="radio" name="question_type" value="audio">
+                            <div class="question-type-icon">🎵</div>
+                            <div class="question-type-name">سؤال صوت</div>
+                        </div>
+                        <div class="question-type-option" data-type="blanks">
+                            <input type="radio" name="question_type" value="blanks">
+                            <div class="question-type-icon">📋</div>
+                            <div class="question-type-name">سؤال تدرج</div>
+                        </div>
+                        <div class="question-type-option" data-type="qr">
+                            <input type="radio" name="question_type" value="qr">
+                            <div class="question-type-icon">📱</div>
+                            <div class="question-type-name">سؤال باركود</div>
+                        </div>
+                        <div class="question-type-option" data-type="puzzle">
+                            <input type="radio" name="question_type" value="puzzle">
+                            <div class="question-type-icon">🧩</div>
+                            <div class="question-type-name">صورة متقطعة</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- اختيار النقاط -->
+                <div class="form-group">
+                    <label>عدد النقاط:</label>
+                    <div class="points-options">
+                        <div class="points-option" data-points="200">
+                            <input type="radio" name="points" value="200">
+                            200 نقطة
+                        </div>
+                        <div class="points-option" data-points="400">
+                            <input type="radio" name="points" value="400">
+                            400 نقطة
+                        </div>
+                        <div class="points-option" data-points="600">
+                            <input type="radio" name="points" value="600">
+                            600 نقطة
+                        </div>
+                    </div>
+                </div>
+
+                <!-- حقول السؤال العادي -->
+                <div id="editNormalFields" class="question-fields">
+                    <div class="form-group">
+                        <label for="editQuestionText">نص السؤال:</label>
+                        <textarea id="editQuestionText" name="question" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editNormalQuestionNotes">الملاحظات (اختياري):</label>
+                        <textarea id="editNormalQuestionNotes" name="notes" placeholder="ملاحظات تظهر فوق السؤال في صفحة اللعبة"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editQuestionImage">صورة السؤال (اختياري):</label>
+                        <input type="file" id="editQuestionImage" name="question_image" accept="image/*">
+                        <div id="currentQuestionImage"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editQuestionAnswer">الإجابة الصحيحة:</label>
+                        <input type="text" id="editQuestionAnswer" name="correct_answer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editAnswerImage">صورة الإجابة الصحيحة (اختياري):</label>
+                        <input type="file" id="editAnswerImage" name="correct_answer_image" accept="image/*">
+                        <div id="currentAnswerImage"></div>
+                    </div>
+                </div>
+
+                <!-- حقول السؤال الفيديو -->
+                <div id="editVideoFields" class="question-fields">
+                    <div class="form-group">
+                        <label for="editVideoQuestionText">نص السؤال:</label>
+                        <textarea id="editVideoQuestionText" name="question" rows="2"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editVideoQuestionNotes">الملاحظات (اختياري):</label>
+                        <textarea id="editVideoQuestionNotes" name="notes" placeholder="ملاحظات تظهر فوق السؤال في صفحة اللعبة"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editVideoQuestionImage">صورة السؤال (اختياري):</label>
+                        <input type="file" id="editVideoQuestionImage" name="question_image" accept="image/*">
+                        <div id="currentVideoQuestionImage"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editVideoAnswerText">الإجابة الصحيحة:</label>
+                        <input type="text" id="editVideoAnswerText" name="correct_answer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editVideoQuestion">فيديو السؤال (رابط أو رفع ملف):</label>
+                        <input type="text" id="editVideoQuestion" name="video_question" placeholder="رابط الفيديو أو اتركه فارغاً لرفع ملف">
+                        <input type="file" name="video_question_file" accept="video/*" style="margin-top: 10px;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editVideoAnswer">فيديو الإجابة (اختياري):</label>
+                        <input type="text" id="editVideoAnswer" name="video_answer" placeholder="رابط الفيديو أو اتركه فارغاً لرفع ملف">
+                        <input type="file" name="video_answer_file" accept="video/*" style="margin-top: 10px;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editVideoCorrectAnswerImage">صورة الإجابة الصحيحة (اختياري):</label>
+                        <input type="file" id="editVideoCorrectAnswerImage" name="correct_answer_image" accept="image/*">
+                        <div id="currentVideoAnswerImage"></div>
+                    </div>
+                </div>
+
+                <!-- حقول السؤال الصوتي -->
+                <div id="editAudioFields" class="question-fields">
+                    <div class="form-group">
+                        <label for="editAudioQuestionText">نص السؤال:</label>
+                        <textarea id="editAudioQuestionText" name="question" rows="2"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editAudioQuestionNotes">الملاحظات (اختياري):</label>
+                        <textarea id="editAudioQuestionNotes" name="notes" placeholder="ملاحظات تظهر فوق السؤال في صفحة اللعبة"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editAudioQuestionImage">صورة السؤال (اختياري):</label>
+                        <input type="file" id="editAudioQuestionImage" name="question_image" accept="image/*">
+                        <div id="currentAudioQuestionImage"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editAudioAnswerText">الإجابة الصحيحة:</label>
+                        <input type="text" id="editAudioAnswerText" name="correct_answer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editAudioQuestion">صوت السؤال (رابط أو رفع ملف):</label>
+                        <input type="text" id="editAudioQuestion" name="audio_question" placeholder="رابط الصوت أو اتركه فارغاً لرفع ملف">
+                        <input type="file" name="audio_question_file" accept="audio/*" style="margin-top: 10px;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editAudioAnswer">صوت الإجابة (اختياري):</label>
+                        <input type="text" id="editAudioAnswer" name="audio_answer" placeholder="رابط الصوت أو اتركه فارغاً لرفع ملف">
+                        <input type="file" name="audio_answer_file" accept="audio/*" style="margin-top: 10px;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editAudioCorrectAnswerImage">صورة الإجابة الصحيحة (اختياري):</label>
+                        <input type="file" id="editAudioCorrectAnswerImage" name="correct_answer_image" accept="image/*">
+                        <div id="currentAudioAnswerImage"></div>
+                    </div>
+                </div>
+
+                <!-- حقول سؤال الفراغات -->
+                <div id="editBlanksFields" class="question-fields">
+                    <div class="form-group">
+                        <label for="editBlanksQuestionText">نص السؤال:</label>
+                        <textarea id="editBlanksQuestionText" name="question" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editBlanksQuestionNotes">الملاحظات (اختياري):</label>
+                        <textarea id="editBlanksQuestionNotes" name="notes" placeholder="ملاحظات تظهر فوق السؤال في صفحة اللعبة"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editBlanksQuestionImage">صورة السؤال (اختياري):</label>
+                        <input type="file" id="editBlanksQuestionImage" name="question_image" accept="image/*">
+                        <div id="currentBlanksQuestionImage"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editBlanksCorrectAnswer">الإجابة الصحيحة:</label>
+                        <input type="text" id="editBlanksCorrectAnswer" name="correct_answer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>الفراغات (تظهر تدريجياً):</label>
+                        <div class="blanks-container" id="editBlanksContainer">
+                        </div>
+                        <button type="button" class="add-blank-btn" onclick="addEditBlanksItem()">إضافة فراغ</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editBlanksCorrectAnswerImage">صورة الإجابة الصحيحة (اختياري):</label>
+                        <input type="file" id="editBlanksCorrectAnswerImage" name="correct_answer_image" accept="image/*">
+                        <div id="currentBlanksAnswerImage"></div>
+                    </div>
+                </div>
+
+                <!-- حقول سؤال الأحجية -->
+                <div id="editPuzzleFields" class="question-fields">
+                    <div class="form-group">
+                        <label for="editPuzzleQuestionText">نص السؤال:</label>
+                        <textarea id="editPuzzleQuestionText" name="question" rows="2"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editPuzzleQuestionNotes">الملاحظات (اختياري):</label>
+                        <textarea id="editPuzzleQuestionNotes" name="notes" placeholder="ملاحظات تظهر فوق السؤال في صفحة اللعبة"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editPuzzleQuestionImage">صورة السؤال (اختياري):</label>
+                        <input type="file" id="editPuzzleQuestionImage" name="question_image" accept="image/*">
+                        <div id="currentPuzzleQuestionImage"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editPuzzleCorrectAnswer">الإجابة الصحيحة:</label>
+                        <input type="text" id="editPuzzleCorrectAnswer" name="correct_answer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editPuzzleImage">صورة الأحجية:</label>
+                        <input type="file" id="editPuzzleImage" name="puzzle_image" accept="image/*">
+                        <div id="currentPuzzleImage"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editPuzzleCorrectAnswerImage">صورة الإجابة الصحيحة (اختياري):</label>
+                        <input type="file" id="editPuzzleCorrectAnswerImage" name="correct_answer_image" accept="image/*">
+                        <div id="currentPuzzleAnswerImage"></div>
+                    </div>
+                </div>
+
+                <!-- حقول سؤال QR -->
+                <div id="editQrFields" class="question-fields">
+                    <div class="form-group">
+                        <label for="editQrQuestionText">نص السؤال:</label>
+                        <textarea id="editQrQuestionText" name="question" rows="2"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editQrQuestionNotes">الملاحظات (اختياري):</label>
+                        <textarea id="editQrQuestionNotes" name="notes" placeholder="ملاحظات تظهر فوق السؤال في صفحة اللعبة"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editQrQuestionImage">صورة السؤال (اختياري):</label>
+                        <input type="file" id="editQrQuestionImage" name="question_image" accept="image/*">
+                        <div id="currentQrQuestionImage"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editQrCorrectAnswer">الإجابة الصحيحة:</label>
+                        <input type="text" id="editQrCorrectAnswer" name="correct_answer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editQrCorrectAnswerImage">صورة الإجابة الصحيحة (اختياري):</label>
+                        <input type="file" id="editQrCorrectAnswerImage" name="correct_answer_image" accept="image/*">
+                        <div id="currentQrAnswerImage"></div>
+                    </div>
+                </div>
+
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-danger" onclick="closeModal('editQuestionModal')">إلغاء</button>
+                    <button type="submit" class="btn">حفظ التغييرات</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<!-- Modal معاينة السؤال — بنفس ثيم وعناصر صفحة اللعبة -->
+<div id="previewQuestionModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(6px);">
+  <div id="pq-content" style="background:var(--secondary-bg,#fffaf0);padding:30px;border-radius:20px;width:90%;max-width:700px;max-height:90vh;overflow-y:auto;border:1px solid var(--accent-color,#ff9800);text-align:center;position:relative;font-family:'Cairo',sans-serif;color:var(--text-light,#3e2723);">
+
+    <!-- شارة المعاينة -->
+    <div style="position:absolute;top:8px;right:10px;background:rgba(255,152,0,0.15);color:var(--accent-color,#ff9800);border:1px solid var(--accent-color,#ff9800);border-radius:8px;font-size:11px;padding:2px 8px;font-weight:bold;">معاينة</div>
+
+    <!-- النقاط -->
+    <div id="pq-points" style="position:absolute;top:5px;left:5px;background-color:var(--primary-bg,#f5e6d3);color:var(--winner-glow,#ff9800);padding:2px 8px;border-radius:10px;font-size:15px;font-weight:bold;border:1px solid var(--accent-color,#ff9800);">200 نقطة</div>
+
+    <!-- الملاحظات -->
+    <div id="pq-notes" style="background-color:var(--primary-bg,#f5e6d3);color:var(--accent-color,#ff9800);padding:10px 15px;border-radius:10px;font-size:16px;font-weight:bold;border:1px solid var(--accent-color,#ff9800);margin-bottom:20px;margin-top:10px;display:none;"></div>
+
+    <!-- نص السؤال -->
+    <div id="pq-text" style="font-size:35px;margin-bottom:20px;margin-top:10px;"></div>
+
+    <!-- صورة السؤال -->
+    <img id="pq-question-image" style="display:none;max-width:80%;max-height:250px;border-radius:10px;margin:20px auto;box-shadow:0 5px 15px rgba(0,0,0,0.2);" />
+
+    <!-- حاوية الفيديو -->
+    <div id="pq-video-container" style="display:none;margin:20px 0;">
+      <video id="pq-question-video" controls style="display:none;max-width:100%;border-radius:10px;"></video>
+      <video id="pq-answer-video" controls style="display:none;max-width:100%;border-radius:10px;"></video>
+    </div>
+
+    <!-- حاوية الصوت -->
+    <div id="pq-audio-container" style="display:none;margin:20px 0;">
+      <audio id="pq-question-audio" controls style="display:none;width:100%;"></audio>
+      <audio id="pq-answer-audio" controls style="display:none;width:100%;"></audio>
+    </div>
+
+    <!-- حاوية QR -->
+    <div id="pq-qr-container" style="display:none;margin:20px 0;display:none;justify-content:center;">
+      <canvas id="pq-qr-canvas" style="border:2px solid var(--accent-color,#ff9800);border-radius:10px;"></canvas>
+    </div>
+
+    <!-- حاوية الأحجية -->
+    <div id="pq-puzzle-container" style="display:none;margin:20px 0;position:relative;justify-content:center;">
+      <img id="pq-puzzle-image" style="max-width:80%;max-height:300px;border-radius:10px;transition:all 0.5s ease;" />
+    </div>
+
+    <!-- حاوية الفراغات -->
+    <div id="pq-blanks-container" style="display:none;margin:20px 0;">
+      <div id="pq-blanks-text"></div>
+    </div>
+
+    <!-- المؤقت (للمعاينة فقط - غير تفاعلي) -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin:10px 0;">
+      <div id="pq-timer" style="font-size:28px;font-weight:bold;color:var(--accent-color,#ff9800);">00:00</div>
+      <button onclick="pqResetTimer()" title="إعادة الوقت" style="background:rgba(255,152,0,0.15);border:1.5px solid var(--accent-color,#ff9800);color:var(--accent-color,#ff9800);border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'Cairo',sans-serif;padding:0;">↺</button>
+    </div>
+
+    <!-- أزرار الإجراءات -->
+    <div id="pq-modal-actions" style="margin:8px 0;">
+      <button id="pq-show-answer-btn" onclick="pqShowAnswer()" style="padding:12px 25px;margin:8px 5px;border-radius:10px;cursor:pointer;font-weight:bold;border:none;font-size:16px;color:white;background-color:#22c55e;font-family:'Cairo',sans-serif;transition:all 0.3s ease;" onmouseover="this.style.backgroundColor='#16a34a'" onmouseout="this.style.backgroundColor='#22c55e'">إظهار الإجابة</button>
+      <button onclick="closePQModal()" style="padding:12px 25px;margin:8px 5px;border-radius:10px;cursor:pointer;font-weight:bold;border:none;font-size:16px;color:white;background-color:#f43f5e;font-family:'Cairo',sans-serif;transition:all 0.3s ease;" onmouseover="this.style.backgroundColor='#dc2626'" onmouseout="this.style.backgroundColor='#f43f5e'">إغلاق السؤال</button>
+    </div>
+
+    <!-- حاوية الإجابة (مخفية في البداية) -->
+    <div id="pq-answer-container" style="display:none;">
+      <div id="pq-answer-text" style="margin-top:20px;font-weight:bold;font-size:28px;color:var(--winner-glow,#ff9800);"></div>
+      <img id="pq-answer-image" style="display:none;max-width:80%;max-height:250px;border-radius:10px;margin:20px auto;box-shadow:0 5px 15px rgba(0,0,0,0.2);" />
+      <!-- أزرار الفرق (للمعاينة فقط) -->
+      <div style="margin-top:15px;">
+        <button style="padding:12px 20px;margin:8px 5px 0 0;border-radius:10px;cursor:default;font-weight:bold;border:none;font-size:16px;background-color:var(--accent-color,#ff9800);color:var(--primary-bg,#f5e6d3);opacity:0.6;font-family:'Cairo',sans-serif;">✅ الفريق الأول</button>
+        <button style="padding:12px 20px;margin:8px 5px 0 0;border-radius:10px;cursor:default;font-weight:bold;border:none;font-size:16px;background-color:var(--accent-color,#ff9800);color:var(--primary-bg,#f5e6d3);opacity:0.6;font-family:'Cairo',sans-serif;">✅ الفريق الثاني</button>
+        <button style="padding:12px 20px;margin:8px 5px 0 0;border-radius:10px;cursor:default;font-weight:bold;border:none;font-size:16px;background-color:var(--accent-color,#ff9800);color:var(--primary-bg,#f5e6d3);opacity:0.6;font-family:'Cairo',sans-serif;">❌ لا أحد أجاب صحيحاً</button>
+      </div>
+      <div style="margin-top:8px;font-size:12px;color:#999;">(أزرار الفرق للمعاينة فقط)</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal إضافة/تعديل جولة -->
+<div id="gameModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title" id="gameModalTitle">إضافة جولة جديدة</h2>
+            <span class="close" onclick="closeModal('gameModal')">&times;</span>
+        </div>
+        <form id="gameForm">
+            <input type="hidden" id="gameId" name="id">
+            
+            <div class="form-group">
+                <label for="gameName">اسم الجولة:</label>
+                <input type="text" id="gameName" name="name" required>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn btn-danger" onclick="closeModal('gameModal')">إلغاء</button>
+                <button type="submit" class="btn">حفظ الجولة</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+    <script>
+        const API_URL = 'http://localhost:3001';
+        let allCategories = [];
+        let allQuestions = [];
+        let currentCategoryId = null;
+
+        // تحميل البيانات عند بدء الصفحة
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCategories();
+            loadCategoryGroups();
+            setupImportForms();
+            setupQuestionTypeHandlers();
+            setupPointsHandlers();
+        });
+
+        // دوال التبويبات
+        function showTab(tabName) {
+            // إخفاء جميع التبويبات
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // إخفاء قسم الأسئلة
+            document.getElementById('questionsListSection').style.display = 'none';
+            
+            // إظهار التبويب المحدد
+            document.getElementById(tabName).classList.add('active');
+            
+            // تحديث أزرار التبويبات
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        // دوال إدارة التصنيفات
+        async function loadCategoryGroups() {
+            try {
+                const response = await fetch(`${API_URL}/category-groups`);
+                const categoryGroups = await response.json();
+                
+                const tbody = document.querySelector('#categoryGroupsTable tbody');
+                tbody.innerHTML = '';
+                
+                const select = document.getElementById('categoryGroupId');
+                select.innerHTML = '<option value="">اختر التصنيف</option>';
+                
+                categoryGroups.forEach(group => {
+                    // إضافة صف في الجدول
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>
+                            <button class="btn btn-success" onclick="editCategoryGroup(${group.id})" style="margin-left: 5px;">تعديل</button>
+                            <button class="btn btn-danger" onclick="deleteCategoryGroup(${group.id})">حذف</button>
+                        </td>
+                        <td>
+                            <label class="toggle-switch">
+                                <input type="checkbox" ${group.is_hidden ? 'checked' : ''} onchange="toggleCategoryGroupHidden(${group.id}, this)">
+                                <span class="slider"></span>
+                            </label>
+                        </td>
+                        <td>${group.description || '—'}</td>
+                        <td>${group.name}</td>
+                        <td>${group.id}</td>
+                    `;
+                    
+                    // إضافة خيار في القائمة المنسدلة
+                    const option = document.createElement('option');
+                    option.value = group.id;
+                    option.textContent = group.name;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('خطأ في تحميل التصنيفات:', error);
+                alert('حدث خطأ في تحميل التصنيفات');
+            }
+        }
+
+        function openAddCategoryGroupModal() {
+            document.getElementById('categoryGroupModalTitle').textContent = 'إضافة تصنيف جديد';
+            document.getElementById('categoryGroupForm').reset();
+            document.getElementById('categoryGroupId').value = '';
+            document.getElementById('categoryGroupModal').style.display = 'flex';
+        }
+
+        function editCategoryGroup(id) {
+            const response = fetch(`${API_URL}/category-groups`)
+                .then(res => res.json())
+                .then(groups => {
+                    const group = groups.find(g => g.id === id);
+                    if (group) {
+                        document.getElementById('categoryGroupModalTitle').textContent = 'تعديل التصنيف';
+                        document.getElementById('categoryGroupId').value = group.id;
+                        document.getElementById('categoryGroupName').value = group.name;
+                        document.getElementById('categoryGroupDescription').value = group.description || '';
+                        document.getElementById('categoryGroupModal').style.display = 'flex';
+                    }
+                });
+        }
+
+        async function deleteCategoryGroup(id) {
+            if (confirm('هل أنت متأكد من حذف هذا التصنيف؟')) {
+                try {
+                    const response = await fetch(`${API_URL}/category-groups/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        alert('تم حذف التصنيف بنجاح');
+                        loadCategoryGroups();
+                    } else {
+                        
+                        let errText = 'حدث خطأ في العملية';
+                        try {
+                            const ct = response.headers.get('Content-Type') || '';
+                            if (ct.includes('application/json')) {
+                                const error = await response.json();
+                                errText = error.error || errText;
+                            } else {
+                                const text = await response.text();
+                                // نحاول التقاط رسالة موجزة من HTML إن وجدت
+                                errText = (text && text.slice(0, 200)) || errText;
+                            }
+                        } catch(_) { /* تجاهل */ }
+                        alert(errText);
+
+                    }
+                } catch (error) {
+                    console.error('خطأ في حذف التصنيف:', error);
+                    alert('حدث خطأ في حذف التصنيف');
+                }
+            }
+        }
+
+        async function toggleCategoryGroupHidden(id, checkbox) {
+            try {
+                const response = await fetch(`${API_URL}/category-groups/${id}/toggle-hidden`, {
+                    method: 'PUT'
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('تم تغيير حالة التصنيف:', result.message);
+                } else {
+                    
+                        let errText = 'حدث خطأ في العملية';
+                        try {
+                            const ct = response.headers.get('Content-Type') || '';
+                            if (ct.includes('application/json')) {
+                                const error = await response.json();
+                                errText = error.error || errText;
+                            } else {
+                                const text = await response.text();
+                                // نحاول التقاط رسالة موجزة من HTML إن وجدت
+                                errText = (text && text.slice(0, 200)) || errText;
+                            }
+                        } catch(_) { /* تجاهل */ }
+                        alert(errText);
+
+                    checkbox.checked = !checkbox.checked; // إرجاع الحالة السابقة
+                }
+            } catch (error) {
+                console.error('خطأ في تغيير حالة التصنيف:', error);
+                alert('حدث خطأ في تغيير حالة التصنيف');
+                checkbox.checked = !checkbox.checked; // إرجاع الحالة السابقة
+            }
+        }
+
+        // معالج نموذج التصنيف
+        document.getElementById('categoryGroupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            try {
+                const isEdit = data.id && data.id !== '';
+                const url = isEdit ? `${API_URL}/category-groups/${data.id}` : `${API_URL}/category-groups`;
+                const method = isEdit ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: data.name,
+                        description: data.description
+                    })
+                });
+                
+                if (response.ok) {
+                    alert(isEdit ? 'تم تعديل التصنيف بنجاح' : 'تم إضافة التصنيف بنجاح');
+                    closeModal('categoryGroupModal');
+                    loadCategoryGroups();
+                } else {
+                    
+                        let errText = 'حدث خطأ في العملية';
+                        try {
+                            const ct = response.headers.get('Content-Type') || '';
+                            if (ct.includes('application/json')) {
+                                const error = await response.json();
+                                errText = error.error || errText;
+                            } else {
+                                const text = await response.text();
+                                // نحاول التقاط رسالة موجزة من HTML إن وجدت
+                                errText = (text && text.slice(0, 200)) || errText;
+                            }
+                        } catch(_) { /* تجاهل */ }
+                        alert(errText);
+
+                }
+            } catch (error) {
+                console.error('خطأ في حفظ التصنيف:', error);
+                alert('حدث خطأ في حفظ التصنيف');
+            }
+        });
+
+        // دوال إدارة الفئات
+        async function loadCategories() {
+            try {
+                const response = await fetch(`${API_URL}/categories`);
+                allCategories = await response.json();
+                
+                const tbody = document.querySelector('#categoriesTable tbody');
+                tbody.innerHTML = '';
+                
+                allCategories.forEach(category => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>
+                            <button class="btn btn-success" onclick="editCategory(${category.id})" style="margin-left: 5px;">تعديل</button>
+                            <button class="btn btn-danger" onclick="deleteCategory(${category.id})" style="margin-left: 5px;">حذف</button>
+                            <button class="btn" onclick="showQuestionsForCategory(${category.id}, '${category.name}')">عرض الأسئلة</button>
+                        </td>
+                        <td>
+                            <label class="toggle-switch">
+                                <input type="checkbox" ${category.is_hidden ? 'checked' : ''} onchange="toggleCategoryHidden(${category.id}, this)">
+                                <span class="slider"></span>
+                            </label>
+                        </td>
+                        <td>${category.category_group_name || 'بلا تصنيف'}</td>
+                        <td>${category.category_image ? `<img class="thumb" src="${API_URL}/uploads/${category.category_image}" />` : "—"}</td>
+                        <td>${category.description || '—'}</td>
+                        <td>${category.name}</td>
+                        <td>${category.id}</td>
+                    `;
+                });
+            } catch (error) {
+                console.error('خطأ في تحميل الفئات:', error);
+                alert('حدث خطأ في تحميل الفئات');
+            }
+        }
+
+        function openAddCategoryModal() {
+            document.getElementById('categoryModalTitle').textContent = 'إضافة فئة جديدة';
+            document.getElementById('categoryForm').reset();
+            document.getElementById('categoryId').value = '';
+            document.getElementById('categoryModal').style.display = 'flex';
+        }
+
+        function editCategory(id) {
+            const category = allCategories.find(c => c.id === id);
+            if (category) {
+                document.getElementById('categoryModalTitle').textContent = 'تعديل الفئة';
+                document.getElementById('categoryId').value = category.id;
+                document.getElementById('categoryName').value = category.name;
+                document.getElementById('categoryDescription').value = category.description || '';
+                document.getElementById('categoryGroupId').value = category.category_group_id || '';
+                document.getElementById('categoryModal').style.display = 'flex';
+            }
+        }
+
+        async function deleteCategory(id) {
+            if (confirm('هل أنت متأكد من حذف هذه الفئة؟')) {
+                try {
+                    const response = await fetch(`${API_URL}/categories/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        alert('تم حذف الفئة بنجاح');
+                        loadCategories();
+                    } else {
+                        
+                        let errText = 'حدث خطأ في العملية';
+                        try {
+                            const ct = response.headers.get('Content-Type') || '';
+                            if (ct.includes('application/json')) {
+                                const error = await response.json();
+                                errText = error.error || errText;
+                            } else {
+                                const text = await response.text();
+                                // نحاول التقاط رسالة موجزة من HTML إن وجدت
+                                errText = (text && text.slice(0, 200)) || errText;
+                            }
+                        } catch(_) { /* تجاهل */ }
+                        alert(errText);
+
+                    }
+                } catch (error) {
+                    console.error('خطأ في حذف الفئة:', error);
+                    alert('حدث خطأ في حذف الفئة');
+                }
+            }
+        }
+
+        async function toggleCategoryHidden(id, checkbox) {
+            try {
+                const response = await fetch(`${API_URL}/categories/${id}/toggle-hidden`, {
+                    method: 'PUT'
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('تم تغيير حالة الفئة:', result.message);
+                } else {
+                    
+                        let errText = 'حدث خطأ في العملية';
+                        try {
+                            const ct = response.headers.get('Content-Type') || '';
+                            if (ct.includes('application/json')) {
+                                const error = await response.json();
+                                errText = error.error || errText;
+                            } else {
+                                const text = await response.text();
+                                // نحاول التقاط رسالة موجزة من HTML إن وجدت
+                                errText = (text && text.slice(0, 200)) || errText;
+                            }
+                        } catch(_) { /* تجاهل */ }
+                        alert(errText);
+
+                    checkbox.checked = !checkbox.checked; // إرجاع الحالة السابقة
+                }
+            } catch (error) {
+                console.error('خطأ في تغيير حالة الفئة:', error);
+                alert('حدث خطأ في تغيير حالة الفئة');
+                checkbox.checked = !checkbox.checked; // إرجاع الحالة السابقة
+            }
+        }
+
+        // معالج نموذج الفئة
+        document.getElementById('categoryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            
+            try {
+                const isEdit = formData.get('id') && formData.get('id') !== '';
+                const url = isEdit ? `${API_URL}/categories/${formData.get('id')}` : `${API_URL}/categories`;
+                const method = isEdit ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    alert(isEdit ? 'تم تعديل الفئة بنجاح' : 'تم إضافة الفئة بنجاح');
+                    closeModal('categoryModal');
+                    loadCategories();
+                } else {
+                    
+                        let errText = 'حدث خطأ في العملية';
+                        try {
+                            const ct = response.headers.get('Content-Type') || '';
+                            if (ct.includes('application/json')) {
+                                const error = await response.json();
+                                errText = error.error || errText;
+                            } else {
+                                const text = await response.text();
+                                // نحاول التقاط رسالة موجزة من HTML إن وجدت
+                                errText = (text && text.slice(0, 200)) || errText;
+                            }
+                        } catch(_) { /* تجاهل */ }
+                        alert(errText);
+
+                }
+            } catch (error) {
+                console.error('خطأ في حفظ الفئة:', error);
+                alert('حدث خطأ في حفظ الفئة');
+            }
+        });
+
+        // دوال إدارة الأسئلة
+        async function showQuestionsForCategory(categoryId, categoryName) {
+            currentCategoryId = categoryId;
+            document.getElementById('questionsTitle').textContent = `أسئلة فئة: ${categoryName}`;
+            document.getElementById('categoriesTable').style.display = 'none';
+            document.querySelector('#categories .section-header').style.display = 'none';
+            document.getElementById('questionsListSection').style.display = 'block';
+            
+            try {
+                const response = await fetch(`${API_URL}/questions?category_id=${categoryId}`);
+                allQuestions = await response.json();
+                
+                // إضافة console.log لفحص البيانات
+                console.log('بيانات الأسئلة:', allQuestions);
+                if (allQuestions.length > 0) {
+                    console.log('مثال على سؤال:', allQuestions[0]);
+                    console.log('نص السؤال:', allQuestions[0].question);
+                    console.log('الملاحظات:', allQuestions[0].notes);
+                    
+                    // فحص تفصيلي للـ objects
+                    console.log('نوع نص السؤال:', typeof allQuestions[0].question);
+                    console.log('محتوى نص السؤال:', JSON.stringify(allQuestions[0].question));
+                    console.log('نوع الملاحظات:', typeof allQuestions[0].notes);
+                    console.log('محتوى الملاحظات:', JSON.stringify(allQuestions[0].notes));
+                    
+                    // فحص جميع خصائص السؤال
+                    console.log('جميع خصائص السؤال:', Object.keys(allQuestions[0]));
+                }
+                
+                const tbody = document.querySelector('#questionsTable tbody');
+                tbody.innerHTML = '';
+                
+                allQuestions.forEach(question => {
+                    // معالجة البيانات قبل العرض
+                    const questionTextRaw = parseObjectToString(question.question, 'question');
+                    const questionText = formatText(questionTextRaw, 'question');
+                    const questionNotesRaw = parseObjectToString(question.notes, 'notes');
+                    const questionNotes = formatText(questionNotesRaw, 'notes');
+                    
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>
+                            <button class="btn btn-info" onclick="previewQuestion(${question.id})" style="margin-left: 5px;" title="معاينة السؤال">👁 معاينة</button>
+                            <button class="btn btn-success" onclick="editQuestion(${question.id})" style="margin-left: 5px;">تعديل</button>
+                            <button class="btn btn-danger" onclick="deleteQuestion(${question.id})">حذف</button>
+                        </td>
+                        <td>${question.correct_answer_image ? `<img class="thumb" src="${API_URL}/uploads/${question.correct_answer_image}" />` : "—"}</td>
+                        <td>${questionNotes}</td>
+                        <td>${question.points}</td>
+                        <td>${formatCorrectAnswer(question)}</td>
+                        <td>${questionText}</td>
+                        <td>${question.question_image ? `<img class="thumb" src="${API_URL}/uploads/${question.question_image}" />` : "—"}</td>
+                        <td>${getQuestionTypeText(question.question_type)}</td>
+                    `;
+                });
+            } catch (error) {
+                console.error('خطأ في تحميل الأسئلة:', error);
+                alert('حدث خطأ في تحميل الأسئلة');
+            }
+        }
+
+        function parseObjectToString(obj, fieldName = '') {
+            console.log(`parseObjectToString - ${fieldName}:`, obj, typeof obj);
+            
+            // إذا كان null أو undefined
+            if (obj === null || obj === undefined) {
+                console.log(`${fieldName} is null/undefined`);
+                return '—';
+            }
+            
+            // إذا كان string بالفعل
+            if (typeof obj === 'string') {
+                const result = obj.trim() || '—';
+                console.log(`${fieldName} is string:`, result);
+                return result;
+            }
+            
+            // إذا كان number
+            if (typeof obj === 'number') {
+                const result = String(obj);
+                console.log(`${fieldName} is number:`, result);
+                return result;
+            }
+            
+            // إذا كان object
+            if (typeof obj === 'object') {
+                console.log(`${fieldName} is object, keys:`, Object.keys(obj));
+                
+                // إذا كان array
+                if (Array.isArray(obj)) {
+                    const result = obj.join(', ') || '—';
+                    console.log(`${fieldName} is array:`, result);
+                    return result;
+                }
+                
+                // إذا كان object عادي، حاول استخراج النص
+                if (obj.text) {
+                    console.log(`${fieldName} has text property:`, obj.text);
+                    return obj.text;
+                }
+                if (obj.value) {
+                    console.log(`${fieldName} has value property:`, obj.value);
+                    return obj.value;
+                }
+                if (obj.content) {
+                    console.log(`${fieldName} has content property:`, obj.content);
+                    return obj.content;
+                }
+                
+                // إذا كان object فارغ
+                if (Object.keys(obj).length === 0) {
+                    console.log(`${fieldName} is empty object`);
+                    return '—';
+                }
+                
+                // محاولة تحويل إلى JSON string
+                try {
+                    const jsonStr = JSON.stringify(obj);
+                    console.log(`${fieldName} converted to JSON:`, jsonStr);
+                    return jsonStr;
+                } catch (e) {
+                    console.log(`${fieldName} JSON conversion failed:`, e);
+                    return '—';
+                }
+            }
+            
+            // في الحالات الأخرى
+            const result = String(obj) || '—';
+            console.log(`${fieldName} converted to string:`, result);
+            return result;
+        }
+
+        function getQuestionTypeText(type) {
+            const types = {
+                'normal': 'عادي',
+                'video': 'فيديو',
+                'audio': 'صوتي',
+                'blanks': 'فراغات',
+                'puzzle': 'صورة متقطعة',
+                'qr': 'رمز QR'
+            };
+            return types[type] || 'عادي';
+        }
+
+        function formatText(text, fieldName = '') {
+            // إضافة console.log لفحص البيانات
+            if (fieldName) {
+                console.log(`formatText - ${fieldName}:`, text, typeof text);
+            }
+            
+            // التعامل مع القيم الفارغة أو غير المحددة
+            if (text === null || text === undefined || text === '') {
+                return '—';
+            }
+            
+            // التعامل مع البيانات الفاسدة "[object Object]"
+            if (text === '[object Object]' || text === 'undefined' || text === 'null') {
+                return '—';
+            }
+            
+            // إذا كان النص string، أرجعه مباشرة
+            if (typeof text === 'string') {
+                const trimmed = text.trim();
+                return trimmed || '—';
+            }
+            
+            // إذا كان number، حوله إلى string
+            if (typeof text === 'number') {
+                return String(text);
+            }
+            
+            // إذا كان boolean، حوله إلى string
+            if (typeof text === 'boolean') {
+                return text ? 'نعم' : 'لا';
+            }
+            
+            // إذا كان object، حاول استخراج النص
+            if (typeof text === 'object') {
+                // إذا كان array
+                if (Array.isArray(text)) {
+                    return text.join(', ') || '—';
+                }
+                
+                // إذا كان object عادي
+                if (text.text) return text.text;
+                if (text.value) return text.value;
+                if (text.content) return text.content;
+                if (text.name) return text.name;
+                if (text.title) return text.title;
+                
+                // محاولة تحويل Object إلى JSON string
+                try {
+                    const jsonStr = JSON.stringify(text);
+                    if (jsonStr !== '{}' && jsonStr !== 'null') {
+                        return jsonStr;
+                    }
+                } catch (e) {
+                    console.log('خطأ في تحويل Object إلى JSON:', e);
+                }
+                
+                return '—';
+            }
+            
+            // في الحالات الأخرى، حول إلى string
+            return String(text) || '—';
+        }
+
+        function getQuestionText(question) {
+            // البحث في حقول مختلفة للنص
+            return question.question || question.question_text || question.text || question.content || '—';
+        }
+
+        function getQuestionNotes(question) {
+            // البحث في حقول مختلفة للملاحظات
+            return question.notes || question.note || question.description || question.comment || '';
+        }
+function formatCorrectAnswer(q) {
+  // البحث في الحقول المختلفة للإجابة
+  const a = q && (q.answer || q.correct_answer);
+
+  // التعامل مع البيانات الفاسدة "[object Object]"
+  if (a === '[object Object]' || a === 'undefined' || a === 'null') {
+    return '—';
+  }
+
+  // نص مباشر
+  if (typeof a === 'string') {
+    const s = a.trim();
+    if (!s) return '—';
+    
+    // محاولة تحليل JSON إذا كان النص يبدو كـ JSON
+    if (s.startsWith('{') || s.startsWith('[')) {
+      try {
+        const parsed = JSON.parse(s);
+        if (typeof parsed === 'string') return parsed;
+        if (Array.isArray(parsed)) {
+          const cleaned = parsed.map(x => (x ?? '').toString().trim()).filter(Boolean);
+          return cleaned.length ? cleaned.join('، ') : '—';
+        }
+        if (parsed && typeof parsed === 'object') {
+          if (typeof parsed.text === 'string') return parsed.text;
+          if (parsed.value != null) return String(parsed.value);
+        }
+      } catch (_) {
+        // إذا فشل التحليل، أرجع النص كما هو
+      }
+    }
+    
+    return s;
+  }
+
+  // مصفوفة إجابات
+  if (Array.isArray(a)) {
+    const cleaned = a.map(x => (x ?? '').toString().trim()).filter(Boolean);
+    return cleaned.length ? cleaned.join('، ') : '—';
+  }
+
+  // كائن: جرّب خصائص شائعة
+  if (a && typeof a === 'object') {
+    if (typeof a.text === 'string') return a.text;
+    if (a.value != null) return String(a.value);
+  }
+
+  // نوع "تدرج/فراغات": جرّب blanks_data
+  if (q && q.question_type === 'blanks' && q.blanks_data) {
+    try {
+      const arr = Array.isArray(q.blanks_data) ? q.blanks_data : JSON.parse(q.blanks_data);
+      const cleaned = (arr || []).map(x => (x ?? '').toString().trim()).filter(Boolean);
+      return cleaned.length ? cleaned.join(' — ') : '—';
+    } catch (_) { /* تجاهل */ }
+  }
+
+  return '—';
+}
+
+        function hideQuestionsAndShowCategories() {
+            document.getElementById('questionsListSection').style.display = 'none';
+            document.getElementById('categoriesTable').style.display = 'table';
+            document.querySelector('#categories .section-header').style.display = 'flex';
+            currentCategoryId = null;
+            allQuestions = [];
+        }
+
+        function openAddQuestionModal() {
+            document.getElementById('addQuestionForm').reset();
+            document.getElementById('addQuestionCategoryId').value = currentCategoryId;
+            
+            // إعادة تعيين نوع السؤال إلى العادي
+            document.querySelectorAll('#addQuestionModal .question-type-option').forEach(opt => opt.classList.remove('selected'));
+            document.querySelector('#addQuestionModal .question-type-option[data-type="normal"]').classList.add('selected');
+            document.querySelector('#addQuestionModal input[name="question_type"][value="normal"]').checked = true;
+            
+            // إعادة تعيين النقاط إلى 200
+            document.querySelectorAll('#addQuestionModal .points-option').forEach(opt => opt.classList.remove('selected'));
+            document.querySelector('#addQuestionModal .points-option[data-points="200"]').classList.add('selected');
+            document.querySelector('#addQuestionModal input[name="points"][value="200"]').checked = true;
+            
+            showQuestionFields('normal');
+            document.getElementById('addQuestionModal').style.display = 'flex';
+        }
+
+        function openEditQuestionModal(questionId) {
+            const question = allQuestions.find(q => q.id === questionId);
+            if (!question) return;
+
+            // تعبئة البيانات الأساسية
+            document.getElementById('editQuestionId').value = question.id;
+            document.getElementById('editQuestionCategoryId').value = question.category_id;
+
+            // تعيين نوع السؤال
+            const questionType = question.question_type || 'normal';
+            document.querySelectorAll('#editQuestionModal .question-type-option').forEach(opt => {
+                opt.classList.remove('selected');
+                if (opt.dataset.type === questionType) {
+                    opt.classList.add('selected');
+                    opt.querySelector('input').checked = true;
+                }
+            });
+
+            // تعيين النقاط
+            const points = question.points || 200;
+            document.querySelectorAll('#editQuestionModal .points-option').forEach(opt => {
+                opt.classList.remove('selected');
+                if (opt.dataset.points == points) {
+                    opt.classList.add('selected');
+                    opt.querySelector('input').checked = true;
+                }
+            });
+
+            // تعبئة الحقول حسب نوع السؤال
+            showQuestionFields(questionType, 'edit');
+            
+            // تعبئة البيانات المشتركة
+            document.getElementById('editQuestionNotes').value = question.notes || '';
+
+            // تعبئة البيانات حسب النوع
+            switch (questionType) {
+                case 'normal':
+                    document.getElementById('editQuestionText').value = question.question || '';
+                    document.getElementById('editQuestionAnswer').value = formatCorrectAnswer(question) || '';
+                    showCurrentImage('currentQuestionImage', question.question_image);
+                    showCurrentImage('currentAnswerImage', question.correct_answer_image);
+                    break;
+                case 'video':
+                    document.getElementById('editVideoQuestionText').value = question.question || '';
+                    document.getElementById('editVideoAnswerText').value = formatCorrectAnswer(question) || '';
+                    document.getElementById('editVideoQuestion').value = question.video_question || '';
+                    document.getElementById('editVideoAnswer').value = question.video_answer || '';
+                    break;
+                case 'audio':
+                    document.getElementById('editAudioQuestionText').value = question.question || '';
+                    document.getElementById('editAudioAnswerText').value = formatCorrectAnswer(question) || '';
+                    document.getElementById('editAudioQuestion').value = question.audio_question || '';
+                    document.getElementById('editAudioAnswer').value = question.audio_answer || '';
+                    break;
+                case 'blanks':
+                    document.getElementById('editBlanksQuestion').value = question.question || '';
+                    document.getElementById('editBlanksData').value = question.blanks_data || '';
+                    break;
+                case 'puzzle':
+                    document.getElementById('editPuzzleQuestion').value = question.question || '';
+                    document.getElementById('editPuzzleAnswer').value = formatCorrectAnswer(question) || '';
+                    showCurrentImage('currentPuzzleImage', question.puzzle_image);
+                    break;
+                case 'qr':
+                    document.getElementById('editQrQuestion').value = question.question || '';
+                    document.getElementById('editQrAnswer').value = formatCorrectAnswer(question) || '';
+                    document.getElementById('editQrText').value = question.qr_text || '';
+                    break;
+            }
+
+            document.getElementById('editQuestionModal').style.display = 'flex';
+        }
+
+        function showCurrentImage(containerId, imageName) {
+            const container = document.getElementById(containerId);
+            if (imageName) {
+                container.innerHTML = `<p>الصورة الحالية: <img class="thumb" src="${API_URL}/uploads/${imageName}" /></p>`;
+            } else {
+                container.innerHTML = '<p>لا توجد صورة</p>';
+            }
+        }
+
+        function editQuestion(id) {
+            openEditQuestionModal(id);
+        }
+
+        // =============================================
+        // معاينة السؤال — مطابق لصفحة اللعبة
+        // =============================================
+        let pqTimer = null;
+        let pqSeconds = 0;
+        let pqCurrentQuestion = null;
+        let pqCurrentBlanks = [];
+        let pqCurrentBlankIndex = -1;
+        let pqPuzzleTimer = null;
+        let pqPuzzleStage = 0;
+
+        async function previewQuestion(id) {
+            try {
+                const res = await fetch(`${API_URL}/questions/${id}`);
+                if (!res.ok) throw new Error('فشل تحميل السؤال');
+                const q = await res.json();
+                openPreviewModal(q);
+            } catch (e) {
+                alert('حدث خطأ في تحميل المعاينة');
+                console.error(e);
+            }
+        }
+
+        function openPreviewModal(q) {
+            pqCurrentQuestion = q;
+            pqSeconds = 0;
+
+            // إيقاف أي موارد سابقة
+            pqCleanup();
+
+            // النقاط
+            document.getElementById('pq-points').textContent = `${q.points} نقطة`;
+
+            // الملاحظات
+            const notesEl = document.getElementById('pq-notes');
+            if (q.notes && q.notes.trim()) {
+                notesEl.textContent = q.notes;
+                notesEl.style.display = 'block';
+            } else {
+                notesEl.style.display = 'none';
+            }
+
+            // نص السؤال
+            document.getElementById('pq-text').textContent = q.question || '';
+
+            // صورة السؤال
+            const qImg = document.getElementById('pq-question-image');
+            if (q.question_image) {
+                qImg.src = `${API_URL}/uploads/${q.question_image}`;
+                qImg.style.display = 'block';
+            } else {
+                qImg.style.display = 'none';
+            }
+
+            // إخفاء حاوية الإجابة في البداية
+            document.getElementById('pq-answer-container').style.display = 'none';
+            document.getElementById('pq-answer-image').style.display = 'none';
+            document.getElementById('pq-show-answer-btn').style.display = 'inline-block';
+
+            // إعداد حسب نوع السؤال
+            const qt = q.question_type || 'normal';
+            pqHideAllContainers();
+            switch(qt) {
+                case 'video':   pqSetupVideo(q);   break;
+                case 'audio':   pqSetupAudio(q);   break;
+                case 'qr':      pqSetupQR(q);      break;
+                case 'puzzle':  pqSetupPuzzle(q);  break;
+                case 'blanks':  pqSetupBlanks(q);  break;
+            }
+
+            // تشغيل المؤقت
+            pqUpdateTimer();
+            pqTimer = setInterval(() => { pqSeconds++; pqUpdateTimer(); }, 1000);
+
+            // إظهار المودال
+            document.getElementById('previewQuestionModal').style.display = 'flex';
+        }
+
+        function pqHideAllContainers() {
+            ['pq-video-container','pq-audio-container','pq-qr-container','pq-puzzle-container','pq-blanks-container'].forEach(id => {
+                document.getElementById(id).style.display = 'none';
+            });
+            const qv = document.getElementById('pq-question-video');
+            const av = document.getElementById('pq-answer-video');
+            const qa = document.getElementById('pq-question-audio');
+            const aa = document.getElementById('pq-answer-audio');
+            [qv, av, qa, aa].forEach(el => { try { el.pause(); el.removeAttribute('src'); el.style.display = 'none'; } catch(_){} });
+            // إزالة iframes يوتيوب
+            ['pq-video-container','pq-audio-container'].forEach(id => {
+                document.getElementById(id).querySelectorAll('iframe').forEach(f => f.remove());
+            });
+            if (pqPuzzleTimer) { clearInterval(pqPuzzleTimer); pqPuzzleTimer = null; }
+        }
+
+        function pqSetupVideo(q) {
+            const cont = document.getElementById('pq-video-container');
+            cont.style.display = 'block';
+            if (q.video_question) {
+                const isYT = q.video_question.includes('youtube.com') || q.video_question.includes('youtu.be');
+                if (isYT) {
+                    const m = q.video_question.match(/^.*(youtu.be\/|v\/|embed\/|watch\?v=|&v=)([^#&?]*).*/);
+                    const vid = m && m[2].length === 11 ? m[2] : null;
+                    if (vid) { const f = document.createElement('iframe'); f.width='100%'; f.height='315'; f.src=`https://www.youtube.com/embed/${vid}`; f.frameBorder='0'; f.allowFullscreen=true; cont.appendChild(f); }
+                } else {
+                    const el = document.getElementById('pq-question-video');
+                    el.src = q.video_question.startsWith('/uploads/') ? `${API_URL}${q.video_question}` : q.video_question;
+                    el.style.display = 'block';
+                }
+            }
+        }
+
+        function pqSetupAudio(q) {
+            const cont = document.getElementById('pq-audio-container');
+            cont.style.display = 'block';
+            if (q.audio_question) {
+                const isYT = q.audio_question.includes('youtube.com') || q.audio_question.includes('youtu.be');
+                if (isYT) {
+                    const m = q.audio_question.match(/^.*(youtu.be\/|v\/|embed\/|watch\?v=|&v=)([^#&?]*).*/);
+                    const vid = m && m[2].length === 11 ? m[2] : null;
+                    if (vid) { const f = document.createElement('iframe'); f.width='100%'; f.height='80'; f.src=`https://www.youtube.com/embed/${vid}`; f.frameBorder='0'; f.allowFullscreen=true; cont.appendChild(f); }
+                } else {
+                    const el = document.getElementById('pq-question-audio');
+                    el.src = q.audio_question.startsWith('/uploads/') ? `${API_URL}${q.audio_question}` : q.audio_question;
+                    el.style.display = 'block';
+                    try { el.load(); } catch(_) {}
+                }
+            }
+        }
+
+        function pqSetupQR(q) {
+            const cont = document.getElementById('pq-qr-container');
+            cont.style.display = 'flex';
+            if (q.qr_text && typeof QRCode !== 'undefined') {
+                QRCode.toCanvas(document.getElementById('pq-qr-canvas'), q.qr_text, { width: 256, margin: 2 }, err => { if(err) console.error(err); });
+            }
+        }
+
+        function pqSetupPuzzle(q) {
+            const cont = document.getElementById('pq-puzzle-container');
+            cont.style.display = 'flex';
+            if (q.puzzle_image) {
+                const img = document.getElementById('pq-puzzle-image');
+                img.src = q.puzzle_image.startsWith('/uploads/') ? `${API_URL}${q.puzzle_image}` : `${API_URL}/uploads/${q.puzzle_image}`;
+                img.style.display = 'block';
+                pqPuzzleStage = 0;
+                const stages = ['circle(10% at 50% 50%)','circle(20% at 50% 50%)','circle(35% at 50% 50%)','circle(50% at 50% 50%)','circle(70% at 50% 50%)','none'];
+                img.style.clipPath = stages[0];
+                pqPuzzleTimer = setInterval(() => {
+                    pqPuzzleStage++;
+                    if (pqPuzzleStage < stages.length) img.style.clipPath = stages[pqPuzzleStage];
+                    else { clearInterval(pqPuzzleTimer); pqPuzzleTimer = null; }
+                }, 10000);
+            }
+        }
+
+        function pqSetupBlanks(q) {
+            const cont = document.getElementById('pq-blanks-container');
+            cont.style.display = 'block';
+            pqCurrentBlanks = [];
+            pqCurrentBlankIndex = -1;
+            if (q.blanks_data) {
+                try {
+                    let data = q.blanks_data;
+                    if (typeof data === 'string') { const t = data.trim(); if (t.startsWith('[') || t.startsWith('{')) data = JSON.parse(t); else if (t.includes(',')) data = t.split(',').map(s => s.trim()); }
+                    if (Array.isArray(data)) pqCurrentBlanks = data.filter(b => b !== null && b !== undefined && String(b).trim() !== '');
+                } catch(e) {}
+            }
+            if (pqCurrentBlanks.length === 0 && q.correct_answer && q.correct_answer.includes('___'))
+                pqCurrentBlanks = q.correct_answer.split('___').filter(b => b.trim() !== '');
+            pqUpdateBlanksDisplay();
+        }
+
+        function pqUpdateBlanksDisplay() {
+            const el = document.getElementById('pq-blanks-text');
+            if (!pqCurrentBlanks.length) { el.innerHTML = '<p style="color:#a0aec0;">لا توجد فراغات.</p>'; return; }
+            let html = '<div style="display:flex;flex-wrap:wrap;gap:15px;justify-content:center;font-size:1.5em;direction:rtl;">';
+            pqCurrentBlanks.forEach((blank, i) => {
+                if (i <= pqCurrentBlankIndex)
+                    html += `<span style="display:inline-block;background:var(--accent-color,#ff9800);color:var(--primary-bg,#f5e6d3);padding:2px 8px;border-radius:4px;margin:0 2px;font-weight:bold;">${blank}</span>`;
+                else
+                    html += `<span style="border-bottom:3px solid var(--accent-color,#ff9800);min-width:80px;height:40px;display:inline-block;border-radius:4px;"></span>`;
+            });
+            html += '</div>';
+            // زر "الفراغ التالي"
+            if (pqCurrentBlankIndex < pqCurrentBlanks.length - 1) {
+                html += `<button onclick="pqNextBlank()" style="background-color:#ffc107;color:#212529;padding:10px 20px;margin:10px 5px;border-radius:8px;cursor:pointer;font-weight:bold;border:none;font-size:14px;font-family:'Cairo',sans-serif;">إظهار الفراغ التالي (-10 نقاط)</button>`;
+            }
+            el.innerHTML = html;
+        }
+
+        function pqNextBlank() {
+            if (pqCurrentBlankIndex < pqCurrentBlanks.length - 1) {
+                pqCurrentBlankIndex++;
+                pqUpdateBlanksDisplay();
+                if (pqCurrentQuestion && pqCurrentQuestion.points > 10) {
+                    pqCurrentQuestion.points -= 10;
+                    document.getElementById('pq-points').textContent = `${pqCurrentQuestion.points} نقطة`;
+                }
+            }
+        }
+
+        function pqShowAnswer() {
+            if (!pqCurrentQuestion) return;
+            const q = pqCurrentQuestion;
+            document.getElementById('pq-answer-text').textContent = q.correct_answer || '';
+
+            // صورة الإجابة
+            const aImg = document.getElementById('pq-answer-image');
+            if (q.correct_answer_image) {
+                aImg.src = `${API_URL}/uploads/${q.correct_answer_image}`;
+                aImg.style.display = 'block';
+            } else {
+                aImg.style.display = 'none';
+            }
+
+            // فيديو/صوت الإجابة
+            const qt = q.question_type || 'normal';
+            if (qt === 'video' && q.video_answer) {
+                const isYT = q.video_answer.includes('youtube.com') || q.video_answer.includes('youtu.be');
+                if (isYT) {
+                    const m = q.video_answer.match(/^.*(youtu.be\/|v\/|embed\/|watch\?v=|&v=)([^#&?]*).*/);
+                    const vid = m && m[2].length === 11 ? m[2] : null;
+                    if (vid) { const f = document.createElement('iframe'); f.width='100%'; f.height='315'; f.src=`https://www.youtube.com/embed/${vid}`; f.frameBorder='0'; f.allowFullscreen=true; document.getElementById('pq-video-container').appendChild(f); }
+                } else {
+                    const av = document.getElementById('pq-answer-video');
+                    av.src = q.video_answer.startsWith('/uploads/') ? `${API_URL}${q.video_answer}` : q.video_answer;
+                    av.style.display = 'block';
+                }
+            }
+            if (qt === 'audio' && q.audio_answer) {
+                const isYT = q.audio_answer.includes('youtube.com') || q.audio_answer.includes('youtu.be');
+                if (isYT) {
+                    const m = q.audio_answer.match(/^.*(youtu.be\/|v\/|embed\/|watch\?v=|&v=)([^#&?]*).*/);
+                    const vid = m && m[2].length === 11 ? m[2] : null;
+                    if (vid) { const f = document.createElement('iframe'); f.width='100%'; f.height='80'; f.src=`https://www.youtube.com/embed/${vid}`; f.frameBorder='0'; f.allowFullscreen=true; document.getElementById('pq-audio-container').appendChild(f); }
+                } else {
+                    const aa = document.getElementById('pq-answer-audio');
+                    aa.src = q.audio_answer.startsWith('/uploads/') ? `${API_URL}${q.audio_answer}` : q.audio_answer;
+                    aa.style.display = 'block';
+                    try { aa.load(); } catch(_) {}
+                }
+            }
+            if (qt === 'puzzle' && pqPuzzleTimer) { clearInterval(pqPuzzleTimer); pqPuzzleTimer = null; }
+            if (qt === 'puzzle') { const img = document.getElementById('pq-puzzle-image'); if(img) img.style.clipPath = 'none'; }
+
+            document.getElementById('pq-answer-container').style.display = 'block';
+            document.getElementById('pq-show-answer-btn').style.display = 'none';
+        }
+
+        function pqResetTimer() {
+            if (pqTimer) { clearInterval(pqTimer); pqTimer = null; }
+            pqSeconds = 0;
+            pqUpdateTimer();
+            pqTimer = setInterval(() => { pqSeconds++; pqUpdateTimer(); }, 1000);
+        }
+
+        function pqUpdateTimer() {
+            const m = Math.floor(pqSeconds / 60);
+            const s = pqSeconds % 60;
+            document.getElementById('pq-timer').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        }
+
+        function pqCleanup() {
+            if (pqTimer) { clearInterval(pqTimer); pqTimer = null; }
+            pqHideAllContainers();
+        }
+
+        function closePQModal() {
+            pqCleanup();
+            document.getElementById('previewQuestionModal').style.display = 'none';
+        }
+
+        async function deleteQuestion(id) {
+            if (confirm('هل أنت متأكد من حذف هذا السؤال؟')) {
+                try {
+                    const response = await fetch(`${API_URL}/questions/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        alert('تم حذف السؤال بنجاح');
+                        showQuestionsForCategory(currentCategoryId, document.getElementById('questionsTitle').textContent.replace('أسئلة فئة: ', ''));
+                    } else {
+                        
+                        let errText = 'حدث خطأ في العملية';
+                        try {
+                            const ct = response.headers.get('Content-Type') || '';
+                            if (ct.includes('application/json')) {
+                                const error = await response.json();
+                                errText = error.error || errText;
+                            } else {
+                                const text = await response.text();
+                                // نحاول التقاط رسالة موجزة من HTML إن وجدت
+                                errText = (text && text.slice(0, 200)) || errText;
+                            }
+                        } catch(_) { /* تجاهل */ }
+                        alert(errText);
+
+                    }
+                } catch (error) {
+                    console.error('خطأ في حذف السؤال:', error);
+                    alert('حدث خطأ في حذف السؤال');
+                }
+            }
+        }
+
+        // معالجات نماذج الأسئلة
+        
+        // وظيفة لمواءمة أسماء ملفات الصوت/الفيديو مع مفاتيح الحقول التي يتوقعها الخادم
+        function normalizeMediaFormData(formData, formEl) {
+            try {
+                const map = [
+                    { fileName: 'audio_question_file', targetName: 'audio_question' },
+                    { fileName: 'audio_answer_file',  targetName: 'audio_answer'  },
+                    { fileName: 'video_question_file', targetName: 'video_question' },
+                    { fileName: 'video_answer_file',  targetName: 'video_answer'  }
+                ];
+                map.forEach(({fileName, targetName}) => {
+                    const input = formEl.querySelector(`input[name="${fileName}"]`);
+                    if (input && input.files && input.files[0]) {
+                        // إذا اختار المستخدم ملفًا، نرفعه على نفس مفتاح الحقل الذي يتعامل معه الخادم نصًا/ملفًا
+                        formData.set(targetName, input.files[0]);
+                        // (اختياري) إزالة الحقل الأصلي لعدم التشويش
+                        formData.delete(fileName);
+                    }
+                });
+            } catch (e) {
+                console.warn('normalizeMediaFormData error:', e);
+            }
+
+            // ★ تحويل blanks[] إلى blanks_data بصيغة JSON قبل الإرسال
+            try {
+                const blanksValues = formEl.querySelectorAll('input[name="blanks[]"]');
+                if (blanksValues.length > 0) {
+                    const blanksArray = Array.from(blanksValues)
+                        .map(inp => inp.value.trim())
+                        .filter(v => v !== '');
+                    // احذف القيم القديمة وأضف blanks_data كـ JSON
+                    formData.delete('blanks[]');
+                    formData.set('blanks_data', JSON.stringify(blanksArray));
+                }
+            } catch (e) {
+                console.warn('blanks normalization error:', e);
+            }
+        }
+    
+        document.getElementById('addQuestionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            normalizeMediaFormData(formData, e.target);
+            
+            try {
+                const response = await fetch(`${API_URL}/questions`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    alert('تم إضافة السؤال بنجاح');
+                    closeModal('addQuestionModal');
+                    showQuestionsForCategory(currentCategoryId, document.getElementById('questionsTitle').textContent.replace('أسئلة فئة: ', ''));
+                } else {
+                    
+                        let errText = 'حدث خطأ في العملية';
+                        try {
+                            const ct = response.headers.get('Content-Type') || '';
+                            if (ct.includes('application/json')) {
+                                const error = await response.json();
+                                errText = error.error || errText;
+                            } else {
+                                const text = await response.text();
+                                // نحاول التقاط رسالة موجزة من HTML إن وجدت
+                                errText = (text && text.slice(0, 200)) || errText;
+                            }
+                        } catch(_) { /* تجاهل */ }
+                        alert(errText);
+
+                }
+            } catch (error) {
+                console.error('خطأ في إضافة السؤال:', error);
+                alert('حدث خطأ في إضافة السؤال');
+            }
+        });
+
+        document.getElementById('editQuestionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            normalizeMediaFormData(formData, e.target);
+            const questionId = formData.get('id');
+            
+            try {
+                const response = await fetch(`${API_URL}/questions/${questionId}`, {
+                    method: 'PUT',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    alert('تم تعديل السؤال بنجاح');
+                    closeModal('editQuestionModal');
+                    showQuestionsForCategory(currentCategoryId, document.getElementById('questionsTitle').textContent.replace('أسئلة فئة: ', ''));
+                } else {
+                    
+                        let errText = 'حدث خطأ في العملية';
+                        try {
+                            const ct = response.headers.get('Content-Type') || '';
+                            if (ct.includes('application/json')) {
+                                const error = await response.json();
+                                errText = error.error || errText;
+                            } else {
+                                const text = await response.text();
+                                // نحاول التقاط رسالة موجزة من HTML إن وجدت
+                                errText = (text && text.slice(0, 200)) || errText;
+                            }
+                        } catch(_) { /* تجاهل */ }
+                        alert(errText);
+
+                }
+            } catch (error) {
+                console.error('خطأ في تعديل السؤال:', error);
+                alert('حدث خطأ في تعديل السؤال');
+            }
+        });
+
+        // دوال مساعدة للأسئلة
+        function setupQuestionTypeHandlers() {
+            // معالجات نموذج الإضافة
+            document.querySelectorAll('#addQuestionModal .question-type-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    document.querySelectorAll('#addQuestionModal .question-type-option').forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                    option.querySelector('input').checked = true;
+                    showQuestionFields(option.dataset.type);
+                });
+            });
+
+            // معالجات نموذج التعديل
+            document.querySelectorAll('#editQuestionModal .question-type-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    document.querySelectorAll('#editQuestionModal .question-type-option').forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                    option.querySelector('input').checked = true;
+                    showQuestionFields(option.dataset.type, 'edit');
+                });
+            });
+        }
+
+        function setupPointsHandlers() {
+            // معالجات نموذج الإضافة
+            document.querySelectorAll('#addQuestionModal .points-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    document.querySelectorAll('#addQuestionModal .points-option').forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                    option.querySelector('input').checked = true;
+                });
+            });
+
+            // معالجات نموذج التعديل
+            document.querySelectorAll('#editQuestionModal .points-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    document.querySelectorAll('#editQuestionModal .points-option').forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                    option.querySelector('input').checked = true;
+                });
+            });
+        }
+
+        function showQuestionFields(type, mode = 'add') {
+            const prefix = mode === 'edit' ? 'edit' : '';
+            const modal = mode === 'edit' ? '#editQuestionModal' : '#addQuestionModal';
+            
+            // تحويل أول حرف من نوع السؤال إلى حرف كبير
+            const capitalizedType = type.charAt(0).toUpperCase() + type.slice(1);
+            
+            // إخفاء جميع الحقول
+            document.querySelectorAll(`${modal} .question-fields`).forEach(field => {
+                field.classList.remove('active');
+            });
+            
+            // إظهار الحقول المناسبة
+            const targetField = document.getElementById(`${prefix}${capitalizedType}Fields`);
+            // تعطيل جميع حقول question/notes/correct_answer في هذا المودال لتفادي إرسال حقول مكررة
+            document.querySelectorAll(`${modal} textarea[name="question"], ${modal} textarea[name="notes"], ${modal} input[name="correct_answer"]`).forEach(el => {
+                el.disabled = true;
+            });
+            if (targetField) {
+                targetField.classList.add('active');
+                // إعادة تفعيل حقول السؤال/الملاحظات/الإجابة الصحيحة في الحقول الظاهرة فقط
+                targetField.querySelectorAll('textarea[name="question"], textarea[name="notes"], input[name="correct_answer"]').forEach(el => {
+                    el.disabled = false;
+                });
+            }
+        }
+
+        // دوال عامة
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // دوال الاستيراد والتصدير
+        function setupImportForms() {
+            document.getElementById('importQuestionsForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                try {
+                    const response = await fetch(`${API_URL}/import/questions`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    if (response.ok) {
+                        alert('تم استيراد الأسئلة بنجاح');
+                        loadCategories();
+                    } else {
+                        
+                        let errText = 'حدث خطأ في العملية';
+                        try {
+                            const ct = response.headers.get('Content-Type') || '';
+                            if (ct.includes('application/json')) {
+                                const error = await response.json();
+                                errText = error.error || errText;
+                            } else {
+                                const text = await response.text();
+                                // نحاول التقاط رسالة موجزة من HTML إن وجدت
+                                errText = (text && text.slice(0, 200)) || errText;
+                            }
+                        } catch(_) { /* تجاهل */ }
+                        alert(errText);
+
+                    }
+                } catch (error) {
+                    console.error('خطأ في استيراد الأسئلة:', error);
+                    alert('حدث خطأ في استيراد الأسئلة');
+                }
+            });
+
+            document.getElementById('importCategoriesForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                try {
+                    const response = await fetch(`${API_URL}/import/categories`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    if (response.ok) {
+                        alert('تم استيراد الفئات بنجاح');
+                        loadCategories();
+                    } else {
+                        
+                        let errText = 'حدث خطأ في العملية';
+                        try {
+                            const ct = response.headers.get('Content-Type') || '';
+                            if (ct.includes('application/json')) {
+                                const error = await response.json();
+                                errText = error.error || errText;
+                            } else {
+                                const text = await response.text();
+                                // نحاول التقاط رسالة موجزة من HTML إن وجدت
+                                errText = (text && text.slice(0, 200)) || errText;
+                            }
+                        } catch(_) { /* تجاهل */ }
+                        alert(errText);
+
+                    }
+                } catch (error) {
+                    console.error('خطأ في استيراد الفئات:', error);
+                    alert('حدث خطأ في استيراد الفئات');
+                }
+            });
+        }
+
+// دوال إدارة الألعاب
+async function loadGamesAdmin() {
+    try {
+        const response = await fetch(`${API_URL}/games`);
+        const games = await response.json();
+        
+        const tbody = document.querySelector('#gamesTable tbody');
+        tbody.innerHTML = '';
+        
+        games.forEach(game => {
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td>
+                    <button class="btn btn-info" onclick="showGameDetail(${game.id}, '${game.name}')" style="margin-left: 5px;">📊 تفصيل</button>
+                    <button class="btn btn-success" onclick="editGame(${game.id})" style="margin-left: 5px;">تعديل</button>
+                    <button class="btn btn-danger" onclick="deleteGame(${game.id})">حذف</button>
+                </td>
+                <td>${new Date(game.created_at).toLocaleDateString('ar-SA')}</td>
+                <td>${game.name}</td>
+                <td>${game.id}</td>
+            `;
+        });
+    } catch (error) {
+        console.error('خطأ في تحميل الألعاب:', error);
+        alert('حدث خطأ في تحميل الألعاب');
+    }
+}
+
+function openAddGameModal() {
+    document.getElementById('gameModalTitle').textContent = 'إضافة جولة جديدة';
+    document.getElementById('gameForm').reset();
+    document.getElementById('gameId').value = '';
+    document.getElementById('gameModal').style.display = 'flex';
+}
+
+async function editGame(id) {
+    try {
+        const response = await fetch(`${API_URL}/games`);
+        const games = await response.json();
+        const game = games.find(g => g.id === id);
+        
+        if (game) {
+            document.getElementById('gameModalTitle').textContent = 'تعديل الجولة';
+            document.getElementById('gameId').value = game.id;
+            document.getElementById('gameName').value = game.name;
+            document.getElementById('gameModal').style.display = 'flex';
+        }
+    } catch (error) {
+        console.error('خطأ في تحميل بيانات الجولة:', error);
+        alert('حدث خطأ في تحميل بيانات الجولة');
+    }
+}
+
+async function deleteGame(id) {
+    if (confirm('هل أنت متأكد من حذف هذه الجولة؟')) {
+        try {
+            const response = await fetch(`${API_URL}/games/${id}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                alert('تم حذف الجولة بنجاح');
+                loadGamesAdmin();
+            } else {
+                
+                        let errText = 'حدث خطأ في العملية';
+                        try {
+                            const ct = response.headers.get('Content-Type') || '';
+                            if (ct.includes('application/json')) {
+                                const error = await response.json();
+                                errText = error.error || errText;
+                            } else {
+                                const text = await response.text();
+                                // نحاول التقاط رسالة موجزة من HTML إن وجدت
+                                errText = (text && text.slice(0, 200)) || errText;
+                            }
+                        } catch(_) { /* تجاهل */ }
+                        alert(errText);
+
+            }
+        } catch (error) {
+            console.error('خطأ في حذف الجولة:', error);
+            alert('حدث خطأ في حذف الجولة');
+        }
+    }
+}
+
+// معالج نموذج الألعاب
+document.getElementById('gameForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+    
+    try {
+        const isEdit = data.id && data.id !== '';
+        const url = isEdit ? `${API_URL}/games/${data.id}` : `${API_URL}/games`;
+        const method = isEdit ? 'PUT' : 'POST';
+        
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: data.name
+            })
+        });
+        
+        if (response.ok) {
+            alert(isEdit ? 'تم تعديل الجولة بنجاح' : 'تم إضافة الجولة بنجاح');
+            closeModal('gameModal');
+            loadGamesAdmin();
+        } else {
+            
+                        let errText = 'حدث خطأ في العملية';
+                        try {
+                            const ct = response.headers.get('Content-Type') || '';
+                            if (ct.includes('application/json')) {
+                                const error = await response.json();
+                                errText = error.error || errText;
+                            } else {
+                                const text = await response.text();
+                                // نحاول التقاط رسالة موجزة من HTML إن وجدت
+                                errText = (text && text.slice(0, 200)) || errText;
+                            }
+                        } catch(_) { /* تجاهل */ }
+                        alert(errText);
+
+        }
+    } catch (error) {
+        console.error('خطأ في حفظ الجولة:', error);
+        alert('حدث خطأ في حفظ الجولة');
+    }
+});
+
+        // وظائف الإعدادات
+        async function loadSettings() {
+            try {
+                const response = await fetch(`${API_URL}/settings/show_categories_with_groups`);
+                if (response.ok) {
+                    const setting = await response.json();
+                    document.getElementById('showCategoriesWithGroups').checked = setting.value === 'true';
+                }
+            } catch (error) {
+                console.error('خطأ في تحميل الإعدادات:', error);
+            }
+        }
+
+        async function toggleCategoriesGrouping() {
+            const checkbox = document.getElementById('showCategoriesWithGroups');
+            const value = checkbox.checked ? 'true' : 'false';
+            
+            try {
+                const response = await fetch(`${API_URL}/settings/show_categories_with_groups`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ value: value })
+                });
+                
+                if (response.ok) {
+                    alert('تم حفظ الإعداد بنجاح');
+                } else {
+                    alert('حدث خطأ في حفظ الإعداد');
+                    checkbox.checked = !checkbox.checked; // إعادة الحالة السابقة
+                }
+            } catch (error) {
+                console.error('خطأ في حفظ الإعداد:', error);
+                alert('حدث خطأ في حفظ الإعداد');
+                checkbox.checked = !checkbox.checked; // إعادة الحالة السابقة
+            }
+        }
+
+        // دالة تحميل الإحصائيات
+        async function loadStatistics() {
+            const statsContent = document.getElementById('statisticsContent');
+            statsContent.innerHTML = '<p style="text-align: center; color: #718096;">جاري تحميل الإحصائيات...</p>';
+            
+            try {
+                // جلب الفئات والأسئلة
+                const [catsRes, questionsRes] = await Promise.all([
+                    fetch(`${API_URL}/categories`),
+                    fetch(`${API_URL}/questions`)
+                ]);
+                
+                const categories = await catsRes.json();
+                const questions = await questionsRes.json();
+                
+                // تجميع البيانات
+                const stats = categories.map(cat => {
+                    const catQuestions = questions.filter(q => q.category_id === cat.id);
+                    const levels = {};
+                    catQuestions.forEach(q => {
+                        const points = q.points || 0;
+                        levels[points] = (levels[points] || 0) + 1;
+                    });
+                    return {
+                        name: cat.name,
+                        total: catQuestions.length,
+                        levels: levels
+                    };
+                });
+                
+                // الحصول على قائمة بجميع المستويات الفريدة (النقاط) وترتيبها
+                const allPoints = [...new Set(questions.map(q => q.points || 0))].sort((a, b) => a - b);
+                
+                // بناء الجدول
+                let html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>اسم الفئة</th>
+                                <th>إجمالي الأسئلة</th>
+                                ${allPoints.map(p => `<th>مستوى ${p}</th>`).join('')}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${stats.map(s => `
+                                <tr>
+                                    <td style="font-weight: bold;">${s.name}</td>
+                                    <td style="text-align: center;">${s.total}</td>
+                                    ${allPoints.map(p => `
+                                        <td style="text-align: center; ${s.levels[p] ? 'color: #38a169; font-weight: bold;' : 'color: #cbd5e0;'}">
+                                            ${s.levels[p] || 0}
+                                        </td>
+                                    `).join('')}
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                        <tfoot>
+                            <tr style="background-color: #f7fafc; font-weight: bold;">
+                                <td>الإجمالي الكلي</td>
+                                <td style="text-align: center;">${questions.length}</td>
+                                ${allPoints.map(p => {
+                                    const totalForLevel = questions.filter(q => q.points == p).length;
+                                    return `<td style="text-align: center;">${totalForLevel}</td>`;
+                                }).join('')}
+                            </tr>
+                        </tfoot>
+                    </table>
+                `;
+                
+                statsContent.innerHTML = html;
+            } catch (error) {
+                console.error('خطأ في تحميل الإحصائيات:', error);
+                statsContent.innerHTML = '<p style="text-align: center; color: #e53e3e;">حدث خطأ أثناء تحميل البيانات</p>';
+            }
+        }
+
+        // تحميل الإعدادات عند فتح التبويب
+        function showTab(tabName) {
+            // إخفاء جميع التبويبات
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // إزالة الفئة النشطة من جميع الأزرار
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // إظهار التبويب المحدد
+            document.getElementById(tabName).classList.add('active');
+            
+            // إضافة الفئة النشطة للزر المحدد
+            event.target.classList.add('active');
+            
+            // تحميل البيانات حسب التبويب
+            if (tabName === 'categories') {
+                // إعادة إظهار جدول الفئات وإخفاء قسم الأسئلة
+                document.getElementById('categoriesTable').style.display = 'table';
+                document.querySelector('#categories .section-header').style.display = 'flex';
+                document.getElementById('questionsListSection').style.display = 'none';
+                loadCategories();
+            } else if (tabName === 'category-groups') {
+                loadCategoryGroups();
+            } else if (tabName === 'settings') {
+                loadSettings();
+            } else if (tabName === 'statistics') {
+                loadStatistics();
+            }
+        }
+
+        // دوال إدارة الفراغات
+        function addBlanksItem() {
+            const container = document.getElementById('addBlanksContainer');
+            const blankItem = document.createElement('div');
+            blankItem.className = 'blank-item';
+            blankItem.innerHTML = `
+                <input type="text" name="blanks[]" placeholder="نص الفراغ" required>
+                <button type="button" onclick="this.parentElement.remove()">حذف</button>
+            `;
+            container.appendChild(blankItem);
+        }
+
+        function addEditBlanksItem() {
+            const container = document.getElementById('editBlanksContainer');
+            const blankItem = document.createElement('div');
+            blankItem.className = 'blank-item';
+            blankItem.innerHTML = `
+                <input type="text" name="blanks[]" placeholder="نص الفراغ" required>
+                <button type="button" onclick="this.parentElement.remove()">حذف</button>
+            `;
+            container.appendChild(blankItem);
+        }
+
+        // تحديث دالة openEditQuestionModal لتعبئة الحقول الجديدة
+        function openEditQuestionModal(id) {
+            const question = allQuestions.find(q => q.id === id);
+            if (!question) return;
+
+            // تعبئة البيانات الأساسية
+            document.getElementById('editQuestionId').value = question.id;
+            document.getElementById('editQuestionCategoryId').value = question.category_id;
+
+            // تحديد نوع السؤال
+            const questionType = question.question_type || 'normal';
+            document.querySelectorAll('#editQuestionModal .question-type-option').forEach(opt => opt.classList.remove('selected'));
+            const selectedOption = document.querySelector(`#editQuestionModal .question-type-option[data-type="${questionType}"]`);
+            if (selectedOption) {
+                selectedOption.classList.add('selected');
+                selectedOption.querySelector('input').checked = true;
+            }
+
+            // تحديد النقاط
+            document.querySelectorAll('#editQuestionModal .points-option').forEach(opt => opt.classList.remove('selected'));
+            const pointsOption = document.querySelector(`#editQuestionModal .points-option[data-points="${question.points}"]`);
+            if (pointsOption) {
+                pointsOption.classList.add('selected');
+                pointsOption.querySelector('input').checked = true;
+            }
+
+            // إظهار الحقول المناسبة
+            showQuestionFields(questionType, 'edit');
+
+            // تعبئة البيانات حسب النوع
+            switch (questionType) {
+                case 'normal':
+                    document.getElementById('editQuestionText').value = question.question || '';
+                    document.getElementById('editNormalQuestionNotes').value = question.notes || '';
+                    document.getElementById('editQuestionAnswer').value = formatCorrectAnswer(question) || '';
+                    showCurrentImage('currentQuestionImage', question.question_image);
+                    showCurrentImage('currentAnswerImage', question.correct_answer_image);
+                    break;
+                case 'video':
+                    document.getElementById('editVideoQuestionText').value = question.question || '';
+                    document.getElementById('editVideoQuestionNotes').value = question.notes || '';
+                    document.getElementById('editVideoAnswerText').value = formatCorrectAnswer(question) || '';
+                    document.getElementById('editVideoQuestion').value = question.video_question || '';
+                    document.getElementById('editVideoAnswer').value = question.video_answer || '';
+                    showCurrentImage('currentVideoQuestionImage', question.question_image);
+                    showCurrentImage('currentVideoAnswerImage', question.correct_answer_image);
+                    break;
+                case 'audio':
+                    document.getElementById('editAudioQuestionText').value = question.question || '';
+                    document.getElementById('editAudioQuestionNotes').value = question.notes || '';
+                    document.getElementById('editAudioAnswerText').value = formatCorrectAnswer(question) || '';
+                    document.getElementById('editAudioQuestion').value = question.audio_question || '';
+                    document.getElementById('editAudioAnswer').value = question.audio_answer || '';
+                    showCurrentImage('currentAudioQuestionImage', question.question_image);
+                    showCurrentImage('currentAudioAnswerImage', question.correct_answer_image);
+                    break;
+                case 'blanks':
+                    document.getElementById('editBlanksQuestionText').value = question.question || '';
+                    document.getElementById('editBlanksQuestionNotes').value = question.notes || '';
+                    document.getElementById('editBlanksCorrectAnswer').value = formatCorrectAnswer(question) || '';
+                    showCurrentImage('currentBlanksQuestionImage', question.question_image);
+                    showCurrentImage('currentBlanksAnswerImage', question.correct_answer_image);
+                    // تحميل الفراغات الموجودة
+                    loadEditBlanks(question.blanks_data);
+                    break;
+                case 'puzzle':
+                    document.getElementById('editPuzzleQuestionText').value = question.question || '';
+                    document.getElementById('editPuzzleQuestionNotes').value = question.notes || '';
+                    document.getElementById('editPuzzleCorrectAnswer').value = formatCorrectAnswer(question) || '';
+                    showCurrentImage('currentPuzzleQuestionImage', question.question_image);
+                    showCurrentImage('currentPuzzleImage', question.puzzle_image);
+                    showCurrentImage('currentPuzzleAnswerImage', question.correct_answer_image);
+                    break;
+                case 'qr':
+                    document.getElementById('editQrQuestionText').value = question.question || '';
+                    document.getElementById('editQrQuestionNotes').value = question.notes || '';
+                    document.getElementById('editQrCorrectAnswer').value = formatCorrectAnswer(question) || '';
+                    showCurrentImage('currentQrQuestionImage', question.question_image);
+                    showCurrentImage('currentQrAnswerImage', question.correct_answer_image);
+                    break;
+            }
+
+            document.getElementById('editQuestionModal').style.display = 'flex';
+        }
+
+        function loadEditBlanks(blanksData) {
+            const container = document.getElementById('editBlanksContainer');
+            container.innerHTML = '';
+            
+            if (blanksData) {
+                try {
+                    const blanks = Array.isArray(blanksData) ? blanksData : JSON.parse(blanksData);
+                    blanks.forEach(blank => {
+                        const blankItem = document.createElement('div');
+                        blankItem.className = 'blank-item';
+                        blankItem.innerHTML = `
+                            <input type="text" name="blanks[]" value="${blank}" placeholder="نص الفراغ" required>
+                            <button type="button" onclick="this.parentElement.remove()">حذف</button>
+                        `;
+                        container.appendChild(blankItem);
+                    });
+                } catch (e) {
+                    console.error('خطأ في تحميل الفراغات:', e);
+                }
+            }
+        }
+
+// =============================================
+// دالة تفصيل الجولة
+// =============================================
+async function showGameDetail(gameId, gameName) {
+    document.getElementById('gameDetailTitle').textContent = '📊 تفصيل الجولة: ' + gameName;
+    document.getElementById('gameDetailBody').innerHTML = '<div class="detail-loading">⏳ جاري تحميل البيانات...</div>';
+    document.getElementById('gameDetailModal').style.display = 'flex';
+
+    try {
+        const [playedRes, categoriesRes] = await Promise.all([
+            fetch(API_URL + '/games/' + gameId + '/played'),
+            fetch(API_URL + '/categories?for_game=true')
+        ]);
+
+        const playedIds = new Set(await playedRes.json());
+        const categories = await categoriesRes.json();
+
+        if (categories.length === 0) {
+            document.getElementById('gameDetailBody').innerHTML =
+                '<div class="no-data-msg">لا توجد فئات مضافة بعد.</div>';
+            return;
+        }
+
+        const LEVELS = [200, 400, 600];
+        const LEVEL_NAMES = { 200: 'سهل (200)', 400: 'متوسط (400)', 600: 'صعب (600)' };
+        let totalQuestions = 0, totalUsed = 0;
+        const catDetails = [];
+
+        for (const cat of categories) {
+            const qRes = await fetch(API_URL + '/questions?category_id=' + cat.id);
+            const questions = await qRes.json();
+
+            const catInfo = { id: cat.id, name: cat.name, levels: {} };
+            let catTotal = 0, catUsed = 0;
+
+            LEVELS.forEach(pts => {
+                const levelQs = questions.filter(q => q.points === pts);
+                const usedQs = levelQs.filter(q => playedIds.has(q.id));
+                const remainQs = levelQs.filter(q => !playedIds.has(q.id));
+                catInfo.levels[pts] = {
+                    total: levelQs.length,
+                    used: usedQs.length,
+                    remaining: remainQs.length,
+                    usedList: usedQs,
+                    remainList: remainQs
+                };
+                catTotal += levelQs.length;
+                catUsed += usedQs.length;
+            });
+
+            catInfo.total = catTotal;
+            catInfo.used = catUsed;
+            catInfo.remaining = catTotal - catUsed;
+            catDetails.push(catInfo);
+            totalQuestions += catTotal;
+            totalUsed += catUsed;
+        }
+
+        const totalRemaining = totalQuestions - totalUsed;
+        const usedPct = totalQuestions > 0 ? Math.round((totalUsed / totalQuestions) * 100) : 0;
+
+        let html = `
+            <div class="game-stats-summary">
+                <div class="stat-card">
+                    <div class="stat-num">${totalQuestions}</div>
+                    <div class="stat-label">إجمالي الأسئلة</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num used-num">${totalUsed}</div>
+                    <div class="stat-label">أسئلة مستخدمة</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num remain-num">${totalRemaining}</div>
+                    <div class="stat-label">أسئلة متبقية</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num" style="color:#f39c12">${usedPct}%</div>
+                    <div class="stat-label">نسبة الاستخدام</div>
+                </div>
+            </div>`;
+
+        const catsWithData = catDetails.filter(c => c.total > 0);
+
+        if (catsWithData.length === 0) {
+            html += '<div class="no-data-msg">لا توجد أسئلة مضافة في أي فئة.</div>';
+        } else {
+            catsWithData.forEach((cat, catIdx) => {
+                html += `
+                <div class="category-detail-card">
+                    <div class="category-detail-header">
+                        <span>${cat.name}</span>
+                        <div class="cat-totals">
+                            <span>الكل: ${cat.total}</span>
+                            <span style="color:#ffb3b3">مستخدم: ${cat.used}</span>
+                            <span style="color:#b3ffcc">متبقي: ${cat.remaining}</span>
+                        </div>
+                    </div>
+                    <div class="levels-grid" id="levels-grid-${catIdx}">`;
+
+                LEVELS.forEach((pts, lvIdx) => {
+                    const lv = cat.levels[pts];
+                    const usedW = lv.total > 0 ? Math.round((lv.used / lv.total) * 100) : 0;
+                    const remW  = lv.total > 0 ? Math.round((lv.remaining / lv.total) * 100) : 0;
+                    const drawerId = `drawer-${catIdx}-${pts}`;
+                    html += `
+                        <div class="level-cell" onclick="toggleLevelDrawer('${drawerId}', ${catIdx}, ${pts}, event)">
+                            <div class="level-title">${LEVEL_NAMES[pts]}</div>
+                            <div class="level-bars">
+                                <div class="level-bar-row">
+                                    <span class="level-bar-label" style="color:#e74c3c">مستخدم</span>
+                                    <div class="level-bar-track">
+                                        <div class="level-bar-fill used-bar" style="width:${usedW}%"></div>
+                                    </div>
+                                    <span class="level-bar-count">${lv.used}</span>
+                                </div>
+                                <div class="level-bar-row">
+                                    <span class="level-bar-label" style="color:#2ecc71">متبقي</span>
+                                    <div class="level-bar-track">
+                                        <div class="level-bar-fill remain-bar" style="width:${remW}%"></div>
+                                    </div>
+                                    <span class="level-bar-count">${lv.remaining}</span>
+                                </div>
+                                <div style="text-align:center;font-size:11px;color:#aaa;margin-top:4px">من أصل ${lv.total}</div>
+                            </div>
+                            <div class="click-hint">🔍 انقر لعرض الأسئلة</div>
+                        </div>`;
+                });
+
+                // درج مخفي يأتي بعد صف المستويات (خارج الـ grid داخلياً)
+                html += `</div>`;
+
+                // درج لكل مستوى
+                LEVELS.forEach(pts => {
+                    const lv = cat.levels[pts];
+                    const drawerId = `drawer-${catIdx}-${pts}`;
+                    const usedItems = lv.usedList.map((q,i) =>
+                        `<li class="drawer-q-item used-item"><span class="drawer-q-num">#${i+1}</span><span class="drawer-q-text">${q.question}</span></li>`
+                    ).join('') || `<div class="drawer-empty">لا توجد أسئلة مستخدمة</div>`;
+                    const remainItems = lv.remainList.map((q,i) =>
+                        `<li class="drawer-q-item remain-item"><span class="drawer-q-num">#${i+1}</span><span class="drawer-q-text">${q.question}</span></li>`
+                    ).join('') || `<div class="drawer-empty">لا توجد أسئلة متبقية</div>`;
+
+                    html += `
+                    <div class="level-questions-drawer" id="${drawerId}">
+                        <div class="drawer-header">
+                            <div class="drawer-title">📋 أسئلة مستوى ${LEVEL_NAMES[pts]} — ${cat.name}</div>
+                            <span class="drawer-close" onclick="closeLevelDrawer('${drawerId}')">✕</span>
+                        </div>
+                        <div class="drawer-sections">
+                            <div>
+                                <span class="drawer-section-title used-title">🔴 مستخدمة (${lv.used})</span>
+                                <ul class="drawer-q-list">${usedItems}</ul>
+                            </div>
+                            <div>
+                                <span class="drawer-section-title remain-title">🟢 متبقية (${lv.remaining})</span>
+                                <ul class="drawer-q-list">${remainItems}</ul>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+
+                html += `</div>`; // إغلاق category-detail-card
+            });
+        }
+
+        document.getElementById('gameDetailBody').innerHTML = html;
+
+    } catch (err) {
+        console.error('خطأ في تفصيل الجولة:', err);
+        document.getElementById('gameDetailBody').innerHTML =
+            '<div class="no-data-msg">❌ حدث خطأ في تحميل البيانات. تأكد من تشغيل الخادم.</div>';
+    }
+}
+
+function toggleLevelDrawer(drawerId, catIdx, pts, event) {
+    // أغلق كل الأدراج الأخرى أولاً
+    document.querySelectorAll('.level-questions-drawer.open').forEach(el => {
+        if (el.id !== drawerId) el.classList.remove('open');
+    });
+    // فتح/إغلاق الدرج المطلوب
+    const drawer = document.getElementById(drawerId);
+    if (drawer) drawer.classList.toggle('open');
+    // تمييز الخلية النشطة
+    document.querySelectorAll('.level-cell').forEach(c => c.style.background = '');
+    if (drawer && drawer.classList.contains('open')) {
+        event.currentTarget.style.background = '#ebf0ff';
+    }
+}
+
+function closeLevelDrawer(drawerId) {
+    const drawer = document.getElementById(drawerId);
+    if (drawer) drawer.classList.remove('open');
+    document.querySelectorAll('.level-cell').forEach(c => c.style.background = '');
+}
+
+// =============================================
+// دوال تبويب مراجعة الأسئلة
+// =============================================
+function loadReviewQuestions() {
+    const container = document.getElementById('reviewQuestionsContainer');
+    container.innerHTML = '<div style="text-align:center;padding:30px;color:#a0aec0;">⏳ جاري التحميل...</div>';
+
+    // نحاول من API أولاً، وإذا فشل نرجع للـ localStorage
+    fetch(API_URL + '/review-flags')
+        .then(r => r.ok ? r.json() : Promise.reject())
+        .then(flags => renderReviewCards(flags, 'api'))
+        .catch(() => {
+            // fallback: localStorage
+            const flags = JSON.parse(localStorage.getItem('flaggedQuestions') || '[]');
+            renderReviewCards(flags, 'local');
+        });
+}
+
+function renderReviewCards(flags, source) {
+    const container = document.getElementById('reviewQuestionsContainer');
+    updateReviewBadge(flags.length);
+
+    if (flags.length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:50px;color:#a0aec0;font-size:1.1rem;">🎉 لا توجد أسئلة تحتاج مراجعة</div>';
+        return;
+    }
+
+    // normalize fields based on source
+    const normalized = flags.map(q => ({
+        id: q.question_id || q.id,
+        question: q.question,
+        correct_answer: q.correct_answer || '',
+        points: q.points || '—',
+        question_type: q.question_type || 'normal',
+        category_name: q.category_name || '',
+        flagged_at: q.flagged_at || null,
+        _source: source
+    }));
+
+    container.innerHTML = normalized.map(q => `
+        <div class="review-card" id="review-card-${q.id}">
+            <div class="review-card-header">
+                <div style="font-weight:700;font-size:1rem;">🚩 سؤال للمراجعة</div>
+                <div class="q-meta">
+                    <span>نقاط: ${q.points}</span>
+                    <span>النوع: ${getTypeArabic(q.question_type)}</span>
+                    ${q.category_name ? `<span>الفئة: ${q.category_name}</span>` : ''}
+                    ${q.flagged_at ? `<span>${new Date(q.flagged_at).toLocaleString('ar-SA')}</span>` : ''}
+                </div>
+            </div>
+            <div class="review-card-body">
+                <div class="q-text">❓ ${q.question}</div>
+                ${q.correct_answer ? `<div class="q-answer">✅ الإجابة: ${q.correct_answer}</div>` : ''}
+            </div>
+            <div class="review-card-actions">
+                <button class="btn" style="font-size:0.9rem;padding:8px 18px;" onclick="editReviewQuestion(${q.id})">✏️ تعديل</button>
+                <button class="btn btn-danger" style="font-size:0.9rem;padding:8px 18px;" onclick="deleteReviewQuestion(${q.id})">🗑️ حذف</button>
+                <button class="btn btn-success" style="font-size:0.9rem;padding:8px 18px;" onclick="dismissReviewFlag(${q.id}, '${q._source}')">✅ تمت المراجعة</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function updateReviewBadge(count) {
+    const badge = document.getElementById('reviewBadge');
+    if (!badge) return;
+    if (count > 0) {
+        badge.style.display = 'inline-block';
+        badge.textContent = count;
+    } else {
+        badge.style.display = 'none';
+    }
+}
+
+function getTypeArabic(type) {
+    const map = { normal:'عادي', video:'فيديو', audio:'صوتي', blanks:'فراغات', puzzle:'أحجية', qr:'QR' };
+    return map[type] || 'عادي';
+}
+
+async function editReviewQuestion(questionId) {
+    try {
+        const res = await fetch(`${API_URL}/questions/${questionId}`);
+        if (!res.ok) { alert('لم يتم العثور على السؤال في قاعدة البيانات.'); return; }
+        const question = await res.json();
+        // نفتح نافذة التعديل الموجودة
+        editQuestion(question);
+        // بعد الحفظ سنزيل العلامة تلقائياً (انظر ربط الحدث أدناه)
+        window._editingReviewId = questionId;
+    } catch (e) {
+        alert('خطأ في تحميل السؤال: ' + e.message);
+    }
+}
+
+async function deleteReviewQuestion(questionId) {
+    if (!confirm('هل تريد حذف هذا السؤال نهائياً من قاعدة البيانات؟')) return;
+    try {
+        const res = await fetch(`${API_URL}/questions/${questionId}`, { method: 'DELETE' });
+        if (!res.ok) { const d = await res.json(); alert('خطأ: ' + d.error); return; }
+        dismissReviewFlag(questionId);
+        alert('تم حذف السؤال بنجاح.');
+    } catch(e) {
+        alert('خطأ في الحذف: ' + e.message);
+    }
+}
+
+function dismissReviewFlag(questionId, source) {
+    // حذف من API
+    fetch(API_URL + '/review-flags/' + questionId, { method: 'DELETE' }).catch(() => {});
+    // حذف من localStorage
+    const flags = JSON.parse(localStorage.getItem('flaggedQuestions') || '[]');
+    localStorage.setItem('flaggedQuestions', JSON.stringify(flags.filter(f => f.id !== questionId)));
+
+    const card = document.getElementById(`review-card-${questionId}`);
+    if (card) {
+        card.style.opacity = '0';
+        card.style.transform = 'translateX(30px)';
+        card.style.transition = 'all 0.3s ease';
+        setTimeout(() => { loadReviewQuestions(); }, 300);
+    } else loadReviewQuestions();
+}
+
+function clearAllReviewFlags() {
+    if (!confirm('هل تريد مسح جميع علامات المراجعة؟')) return;
+    // مسح من API: نجلب الكل ثم نحذف
+    fetch(API_URL + '/review-flags')
+        .then(r => r.ok ? r.json() : [])
+        .then(flags => {
+            const deletes = flags.map(f => fetch(API_URL + '/review-flags/' + f.question_id, { method: 'DELETE' }));
+            return Promise.all(deletes);
+        }).catch(() => {}).finally(() => {
+            localStorage.setItem('flaggedQuestions', '[]');
+            loadReviewQuestions();
+        });
+}
+
+// مراقبة localStorage لتحديث الشارة تلقائياً
+window.addEventListener('storage', (e) => {
+    if (e.key === 'flaggedQuestions') {
+        const flags = JSON.parse(e.newValue || '[]');
+        updateReviewBadge(flags.length);
+    }
+});
+
+// تحديث الشارة عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', () => {
+    const flags = JSON.parse(localStorage.getItem('flaggedQuestions') || '[]');
+    updateReviewBadge(flags.length);
+});
+
+// ربط حدث نجاح التعديل لإزالة العلامة من المراجعة
+(function patchEditSave() {
+    // نعيد ربط submit فقط بعد تحميل الصفحة
+    document.addEventListener('DOMContentLoaded', () => {
+        const editForm = document.getElementById('editQuestionForm');
+        if (!editForm) return;
+        editForm.addEventListener('submit', () => {
+            // بعد النجاح، إذا كنا نعدّل من تبويب المراجعة نزيل العلامة
+            setTimeout(() => {
+                if (window._editingReviewId) {
+                    dismissReviewFlag(window._editingReviewId);
+                    window._editingReviewId = null;
+                }
+            }, 800);
+        });
+    });
+})();
+
+    </script>
+</body>
+</html>
+

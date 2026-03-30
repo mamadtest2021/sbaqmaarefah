@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>🎯 صفحة مدير اللعبة</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #1a1a2e;
+  --card: #16213e;
+  --accent: #ff9800;
+  --accent2: #ffcc00;
+  --text: #f0f0f0;
+  --muted: #a0aec0;
+  --green: #22c55e;
+  --red: #f43f5e;
+  --purple: #9c27b0;
+  --border: rgba(255,152,0,0.25);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Cairo', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  direction: rtl;
+}
+
+/* ===== الرأس ===== */
+.gm-header {
+  background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
+  border-bottom: 3px solid var(--accent);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.gm-header h1 {
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.gm-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.status-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #555;
+  transition: background 0.3s;
+}
+.status-dot.connected { background: var(--green); box-shadow: 0 0 8px var(--green); }
+
+/* ===== قسم السؤال الحالي ===== */
+#currentQuestionSection {
+  padding: 20px;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.q-waiting {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+  font-size: 1.1rem;
+}
+.q-waiting .q-icon { font-size: 56px; margin-bottom: 12px; opacity: 0.4; }
+
+.q-card {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  animation: fadeInCard 0.4s ease;
+}
+@keyframes fadeInCard {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.q-card-header {
+  background: linear-gradient(135deg, #0f3460, #1a1a2e);
+  border-bottom: 2px solid var(--accent);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.q-card-header .q-points {
+  background: var(--accent);
+  color: #000;
+  font-weight: 900;
+  font-size: 1rem;
+  padding: 4px 14px;
+  border-radius: 20px;
+}
+.q-card-header .q-team {
+  color: var(--accent2);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+.q-card-header .q-type {
+  color: var(--muted);
+  font-size: 0.85rem;
+  background: rgba(255,255,255,0.07);
+  padding: 3px 10px;
+  border-radius: 10px;
+}
+
+.q-card-body { padding: 24px 22px 18px; }
+
+.q-notes {
+  background: rgba(255,152,0,0.1);
+  border: 1px solid rgba(255,152,0,0.3);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: var(--accent);
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  display: none;
+}
+
+.q-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.6;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.q-image { display: none; text-align: center; margin-bottom: 16px; }
+.q-image img { max-width: 100%; max-height: 240px; border-radius: 12px; border: 2px solid var(--border); }
+
+/* الإجابة */
+.q-answer-section {
+  display: none;
+  background: rgba(34,197,94,0.08);
+  border: 2px solid rgba(34,197,94,0.4);
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-top: 16px;
+  animation: fadeInCard 0.3s ease;
+}
+.q-answer-label {
+  color: var(--green);
+  font-weight: 900;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+}
+.q-answer-text {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+}
+.q-answer-image { display: none; text-align: center; margin-top: 12px; }
+.q-answer-image img { max-width: 100%; max-height: 180px; border-radius: 10px; border: 2px solid rgba(34,197,94,0.4); }
+
+/* أزرار الأكشن */
+.q-card-actions {
+  padding: 16px 22px 20px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--border);
+}
+
+.gm-btn {
+  font-family: 'Cairo', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 11px 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.gm-btn:hover { transform: translateY(-2px); }
+.gm-btn:active { transform: translateY(0); }
+.gm-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+
+.btn-swap {
+  background: linear-gradient(135deg, #ffc107, #ff9800);
+  color: #000;
+  box-shadow: 0 4px 14px rgba(255,152,0,0.35);
+}
+.btn-swap:hover { box-shadow: 0 6px 20px rgba(255,152,0,0.55); }
+
+.btn-flag {
+  background: linear-gradient(135deg, #9c27b0, #673ab7);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(156,39,176,0.3);
+}
+.btn-flag:hover { box-shadow: 0 6px 20px rgba(156,39,176,0.5); }
+.btn-flag.flagged {
+  background: linear-gradient(135deg, #e91e63, #c2185b);
+  box-shadow: 0 4px 14px rgba(233,30,99,0.4);
+}
+
+/* التبويب */
+.flag-toggle-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.toggle-track {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: #555;
+  border-radius: 24px;
+  transition: background 0.3s;
+  cursor: pointer;
+}
+.toggle-track.on { background: #9c27b0; }
+.toggle-thumb {
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 18px; height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+.toggle-track.on .toggle-thumb { transform: translateX(20px); }
+
+/* ===== لا يوجد سؤال ===== */
+#noQuestionMsg { display: block; }
+#questionDisplay { display: none; }
+
+/* ===== رسائل الحالة ===== */
+.gm-toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: #222;
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 30px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+  z-index: 9999;
+  border: 1px solid rgba(255,255,255,0.1);
+  white-space: nowrap;
+}
+.gm-toast.show { transform: translateX(-50%) translateY(0); }
+.gm-toast.success { border-color: var(--green); }
+.gm-toast.warning { border-color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="gm-header">
+  <h1>🎯 مدير اللعبة</h1>
+  <div class="gm-status">
+    <div class="status-dot" id="statusDot"></div>
+    <span id="statusText">في انتظار سؤال...</span>
+  </div>
+</div>
+
+<div id="currentQuestionSection">
+
+  <!-- حالة الانتظار -->
+  <div id="noQuestionMsg" class="q-waiting">
+    <div class="q-icon">🎮</div>
+    <div>في انتظار فتح سؤال من صفحة اللعبة...</div>
+  </div>
+
+  <!-- بطاقة السؤال الحالي -->
+  <div id="questionDisplay" class="q-card">
+    <div class="q-card-header">
+      <span class="q-points" id="gmPoints">200 نقطة</span>
+      <span class="q-type" id="gmType">عادي</span>
+      <span class="q-team" id="gmTeam"></span>
+    </div>
+
+    <div class="q-card-body">
+      <div class="q-notes" id="gmNotes"></div>
+      <div class="q-text" id="gmText">نص السؤال</div>
+      <div class="q-image" id="gmQImage"><img id="gmQImg" src="" alt="صورة السؤال"></div>
+
+      <div class="q-answer-section" id="gmAnswerSection">
+        <div class="q-answer-label">✅ الإجابة الصحيحة</div>
+        <div class="q-answer-text" id="gmAnswerText"></div>
+        <div class="q-answer-image" id="gmAImage"><img id="gmAImg" src="" alt="صورة الإجابة"></div>
+      </div>    </div>
+
+    <div class="q-card-actions">
+
+      <!-- زر استبدال السؤال -->
+      <button class="gm-btn btn-swap" id="gmSwapBtn" onclick="requestSwapQuestion()" title="استبدال السؤال الحالي بسؤال آخر من نفس الفئة والمستوى">
+        🔄 استبدال السؤال
+      </button>
+
+      <!-- زر مراجعة السؤال (شيك بوتين) -->
+      <button class="gm-btn btn-flag" id="gmFlagBtn" onclick="toggleFlagQuestion()">
+        <span id="gmFlagIcon">🚩</span>
+        <span id="gmFlagLabel">مراجعة السؤال</span>
+        <span class="flag-toggle-wrap">
+          <span class="toggle-track" id="gmToggleTrack">
+            <span class="toggle-thumb"></span>
+          </span>
+        </span>
+      </button>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- toast للإشعارات -->
+<div class="gm-toast" id="gmToast"></div>
+
+<script>
+// =============================================
+// قناة الاتصال مع صفحة اللعبة
+// =============================================
+const gmChannel = new BroadcastChannel('game_master_channel');
+
+let currentQuestion = null;
+let isFlagged = false;
+
+const TYPE_MAP = {
+  normal: 'عادي', video: 'فيديو', audio: 'صوتي',
+  blanks: 'فراغات', puzzle: 'أحجية', qr: 'QR'
+};
+
+// =============================================
+// استقبال الرسائل من صفحة اللعبة
+// =============================================
+gmChannel.onmessage = (event) => {
+  const { type, data } = event.data;
+
+  if (type === 'question_open') {
+    currentQuestion = data;
+    isFlagged = false;
+    showQuestion(data);
+    setStatus('connected', `فريق: ${data.currentTeam || ''} — سؤال ${data.points} نقطة`);
+  }
+
+  if (type === 'answer_show') {
+    showAnswer();
+  }
+
+  if (type === 'question_close') {
+    hideQuestion();
+    setStatus(false, 'في انتظار سؤال...');
+  }
+
+  if (type === 'question_flagged') {
+    // تحديث حالة العلم من صفحة اللعبة
+    if (currentQuestion) {
+      isFlagged = data.flagged;
+      updateFlagUI();
+    }
+  }
+};
+
+// =============================================
+// عرض السؤال
+// =============================================
+function showQuestion(data) {
+  document.getElementById('noQuestionMsg').style.display = 'none';
+  document.getElementById('questionDisplay').style.display = 'block';
+
+  document.getElementById('gmPoints').textContent = `${data.points} نقطة`;
+  document.getElementById('gmType').textContent = TYPE_MAP[data.type] || 'عادي';
+  document.getElementById('gmTeam').textContent = data.currentTeam ? `دور: ${data.currentTeam}` : '';
+  document.getElementById('gmText').textContent = data.question || '';
+
+  // الملاحظات
+  const notes = document.getElementById('gmNotes');
+  if (data.notes && data.notes.trim()) {
+    notes.textContent = data.notes;
+    notes.style.display = 'block';
+  } else {
+    notes.style.display = 'none';
+  }
+
+  // صورة السؤال
+  const qImg = document.getElementById('gmQImage');
+  if (data.question_image) {
+    document.getElementById('gmQImg').src = data.question_image;
+    qImg.style.display = 'block';
+  } else {
+    qImg.style.display = 'none';
+  }
+
+  // الإجابة — تظهر فوراً لمدير اللعبة
+  document.getElementById('gmAnswerText').textContent = data.answer || '—';
+  document.getElementById('gmAnswerSection').style.display = 'block';
+
+  // صورة الإجابة
+  const aImg = document.getElementById('gmAImage');
+  if (data.answer_image) {
+    document.getElementById('gmAImg').src = data.answer_image;
+    aImg.style.display = 'block';
+  } else {
+    aImg.style.display = 'none';
+  }
+
+  // إعادة تعيين زر الاستبدال
+  document.getElementById('gmSwapBtn').disabled = false;
+
+  // إعادة تعيين زر المراجعة
+  isFlagged = false;
+  updateFlagUI();
+}
+
+function showAnswer() {
+  // الإجابة مرئية بالفعل — فقط نعطّل زر الاستبدال بعد ظهور الإجابة في صفحة اللعبة
+  document.getElementById('gmSwapBtn').disabled = true;
+}
+
+function hideQuestion() {
+  document.getElementById('noQuestionMsg').style.display = 'block';
+  document.getElementById('questionDisplay').style.display = 'none';
+  currentQuestion = null;
+}
+
+// =============================================
+// زر استبدال السؤال
+// =============================================
+function requestSwapQuestion() {
+  if (!currentQuestion) return;
+  // إرسال طلب الاستبدال لصفحة اللعبة
+  gmChannel.postMessage({ type: 'swap_question_request', data: {} });
+  document.getElementById('gmSwapBtn').disabled = true;
+  showToast('⏳ جاري استبدال السؤال...', 'warning');
+}
+
+// =============================================
+// زر مراجعة السؤال
+// =============================================
+function toggleFlagQuestion() {
+  if (!currentQuestion) return;
+  isFlagged = !isFlagged;
+  updateFlagUI();
+
+  // إرسال إشعار لصفحة اللعبة
+  gmChannel.postMessage({ type: 'flag_from_master', data: { flagged: isFlagged, question: currentQuestion } });
+
+  // تحديث localStorage مباشرة (ليُظهر في admin.html)
+  const flags = JSON.parse(localStorage.getItem('flaggedQuestions') || '[]');
+  if (isFlagged) {
+    const exists = flags.find(f => f.id === (currentQuestion.id || currentQuestion.question));
+    if (!exists) {
+      flags.push({
+        id: currentQuestion.id || Date.now(),
+        question: currentQuestion.question,
+        correct_answer: currentQuestion.answer || '',
+        points: currentQuestion.points,
+        question_type: currentQuestion.type || 'normal',
+        flagged_at: new Date().toISOString()
+      });
+      localStorage.setItem('flaggedQuestions', JSON.stringify(flags));
+    }
+    showToast('🚩 تم تحديد السؤال للمراجعة', 'warning');
+  } else {
+    const updated = flags.filter(f => f.question !== currentQuestion.question);
+    localStorage.setItem('flaggedQuestions', JSON.stringify(updated));
+    showToast('✅ تم إزالة علامة المراجعة');
+  }
+}
+
+function updateFlagUI() {
+  const btn = document.getElementById('gmFlagBtn');
+  const track = document.getElementById('gmToggleTrack');
+  const icon = document.getElementById('gmFlagIcon');
+  const label = document.getElementById('gmFlagLabel');
+  if (isFlagged) {
+    btn.classList.add('flagged');
+    track.classList.add('on');
+    icon.textContent = '🔴';
+    label.textContent = 'مُحدَّد للمراجعة';
+  } else {
+    btn.classList.remove('flagged');
+    track.classList.remove('on');
+    icon.textContent = '🚩';
+    label.textContent = 'مراجعة السؤال';
+  }
+}
+
+// =============================================
+// استقبال flag_from_master في صفحة اللعبة
+// =============================================
+// (يُعالَج في game.html)
+
+// =============================================
+// مساعدات
+// =============================================
+function setStatus(connected, text) {
+  const dot = document.getElementById('statusDot');
+  const txt = document.getElementById('statusText');
+  dot.className = 'status-dot' + (connected ? ' connected' : '');
+  txt.textContent = text;
+}
+
+let toastTimer = null;
+function showToast(msg, type = 'success') {
+  const toast = document.getElementById('gmToast');
+  toast.textContent = msg;
+  toast.className = `gm-toast show ${type}`;
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { toast.classList.remove('show'); }, 2500);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>📖 صفحة التعليمات</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+/* ===== المتغيرات — نفس ثيم صفحة اللعبة ===== */
+:root {
+  --primary-bg:   #f5e6d3;
+  --secondary-bg: #fffaf0;
+  --card-bg:      #fff5e6;
+  --accent-color: #ff9800;
+  --accent-hover: #f57c00;
+  --text-light:   #3e2723;
+  --text-dark:    #8d6e63;
+  --border-color: #e8d4c4;
+  --shadow-warm:  rgba(255,152,0,0.15);
+  --danger-color: #f43f5e;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Cairo', sans-serif;
+  background-color: var(--primary-bg);
+  background-image:
+    radial-gradient(ellipse at 15% 15%, rgba(255,152,0,0.08) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 85%, rgba(255,152,0,0.06) 0%, transparent 55%);
+  color: var(--text-light);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===== الرأس ===== */
+.page-header {
+  background: var(--secondary-bg);
+  border-bottom: 3px solid var(--accent-color);
+  box-shadow: 0 4px 20px var(--shadow-warm);
+  padding: 28px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.header-icon {
+  width: 54px;
+  height: 54px;
+  background: linear-gradient(135deg, var(--accent-color), #ffcc00);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  box-shadow: 0 4px 14px rgba(255,152,0,0.35);
+  flex-shrink: 0;
+}
+
+.header-text h1 {
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: var(--text-light);
+  text-align: right;
+}
+
+.header-text p {
+  color: var(--text-dark);
+  font-size: 0.92rem;
+  margin-top: 3px;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--card-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  padding: 9px 18px;
+  font-family: 'Cairo', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+.back-btn:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background: var(--secondary-bg);
+  transform: translateY(-2px);
+}
+
+/* ===== المحتوى الرئيسي ===== */
+.main-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 24px 60px;
+}
+
+/* ===== قسم قواعد اللعبة ===== */
+.rules-section {
+  background: var(--secondary-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 20px;
+  padding: 36px;
+  margin-bottom: 40px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.06);
+  animation: fadeInUp 0.5s ease both;
+}
+
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--accent-color), #ffcc00);
+  color: #fff;
+  font-weight: 900;
+  font-size: 1rem;
+  padding: 6px 18px;
+  border-radius: 30px;
+  margin-bottom: 22px;
+  box-shadow: 0 3px 10px rgba(255,152,0,0.3);
+}
+
+.rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}
+
+.rule-card {
+  background: var(--card-bg);
+  border: 1.5px solid var(--border-color);
+  border-radius: 14px;
+  padding: 20px 18px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  transition: all 0.3s ease;
+}
+.rule-card:hover {
+  border-color: var(--accent-color);
+  box-shadow: 0 6px 18px var(--shadow-warm);
+  transform: translateY(-3px);
+}
+.rule-icon {
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, var(--accent-color), #ffcc00);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+  box-shadow: 0 3px 8px rgba(255,152,0,0.25);
+}
+.rule-body h4 {
+  font-size: 0.97rem;
+  font-weight: 700;
+  color: var(--text-light);
+  margin-bottom: 5px;
+}
+.rule-body p {
+  font-size: 0.88rem;
+  color: var(--text-dark);
+  line-height: 1.6;
+}
+
+/* ===== قسم الفئات ===== */
+.cats-section {
+  animation: fadeInUp 0.5s ease 0.15s both;
+}
+
+.cats-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.cats-count {
+  background: var(--card-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 20px;
+  padding: 5px 16px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+.cats-count span {
+  color: var(--accent-color);
+  font-size: 1.05rem;
+}
+
+/* مجموعة تصنيف */
+.group-block {
+  margin-bottom: 36px;
+}
+
+.group-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.group-divider {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent-color), transparent);
+  border-radius: 2px;
+}
+.group-name {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: var(--accent-color);
+  white-space: nowrap;
+}
+
+/* شبكة الفئات */
+.cats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 22px;
+}
+
+/* بطاقة الفئة */
+.cat-card {
+  background: var(--secondary-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.07);
+  transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+  animation: fadeInUp 0.4s ease both;
+  cursor: default;
+}
+.cat-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--accent-color);
+  box-shadow: 0 14px 32px rgba(255,152,0,0.2);
+}
+
+.cat-img-wrap {
+  position: relative;
+  width: 100%;
+  height: 150px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--card-bg), var(--border-color));
+}
+.cat-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+  display: block;
+}
+.cat-card:hover .cat-img-wrap img {
+  transform: scale(1.08);
+}
+.cat-img-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 52px;
+  background: linear-gradient(135deg, var(--card-bg), #ffe0a0);
+}
+
+/* شريط الاسم */
+.cat-name-bar {
+  background: linear-gradient(135deg, var(--accent-color) 0%, #ffcc00 100%);
+  padding: 10px 14px;
+  text-align: center;
+}
+.cat-name-bar h3 {
+  font-size: 1rem;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* الوصف */
+.cat-desc {
+  padding: 14px 16px;
+  font-size: 0.88rem;
+  color: var(--text-dark);
+  line-height: 1.65;
+  text-align: center;
+  min-height: 58px;
+}
+.cat-desc.empty {
+  color: var(--border-color);
+  font-style: italic;
+}
+
+/* ===== حالات التحميل والخطأ ===== */
+.state-box {
+  text-align: center;
+  padding: 60px 20px;
+}
+.state-box .state-icon {
+  font-size: 54px;
+  margin-bottom: 14px;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+.state-box p {
+  color: var(--text-dark);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+@keyframes pulse {
+  0%,100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.08); opacity: 0.7; }
+}
+
+/* ===== الأنيميشن ===== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== قسم وسائل المساعدة ===== */
+.lifelines-section {
+  background: var(--secondary-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 20px;
+  padding: 36px;
+  margin-bottom: 40px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.06);
+  animation: fadeInUp 0.5s ease 0.08s both;
+}
+
+.lifelines-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 16px;
+}
+
+.lifeline-card {
+  background: var(--card-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 16px;
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.lifeline-card::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--accent-color), #ffcc00);
+  border-radius: 0 14px 14px 0;
+}
+.lifeline-card:hover {
+  border-color: var(--accent-color);
+  box-shadow: 0 8px 22px var(--shadow-warm);
+  transform: translateY(-4px);
+}
+
+.lifeline-card-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.lifeline-emoji {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--accent-color), #ffcc00);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  box-shadow: 0 3px 10px rgba(255,152,0,0.3);
+  flex-shrink: 0;
+}
+.lifeline-name {
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--text-light);
+  line-height: 1.3;
+}
+.lifeline-desc {
+  font-size: 0.875rem;
+  color: var(--text-dark);
+  line-height: 1.65;
+  padding-right: 4px;
+}
+
+/* ===== التجاوب ===== */
+@media (max-width: 640px) {
+  .page-header { padding: 18px 16px; }
+  .header-text h1 { font-size: 1.3rem; }
+  .rules-section { padding: 22px 16px; }
+  .main-content { padding: 24px 14px 50px; }
+  .cats-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== الرأس ===== -->
+<header class="page-header">
+  <div class="header-title">
+    <div class="header-icon">📖</div>
+    <div class="header-text">
+      <h1>صفحة التعليمات</h1>
+      <p>تعرّف على قواعد اللعبة وفئات الأسئلة</p>
+    </div>
+  </div>
+  <a class="back-btn" href="index.html">&#8592; العودة للرئيسية</a>
+</header>
+
+<!-- ===== المحتوى ===== -->
+<main class="main-content">
+
+  <!-- قسم قواعد اللعبة -->
+  <section class="rules-section">
+    <div class="section-label">🎮 كيف تلعب؟</div>
+    <div class="rules-grid">
+
+      <div class="rule-card">
+        <div class="rule-icon">🏆</div>
+        <div class="rule-body">
+          <h4>هدف اللعبة</h4>
+          <p>تتنافس الفرق للإجابة على أسئلة من فئات مختلفة وجمع أكبر عدد من النقاط.</p>
+        </div>
+      </div>
+
+      <div class="rule-card">
+        <div class="rule-icon">🗂️</div>
+        <div class="rule-body">
+          <h4>اختيار الفئات</h4>
+          <p>يختار مدير اللعبة مجموعة من الفئات قبل البدء، ولكل فئة أسئلة بمستويات مختلفة.</p>
+        </div>
+      </div>
+
+      <div class="rule-card">
+        <div class="rule-icon">💰</div>
+        <div class="rule-body">
+          <h4>النقاط</h4>
+          <p>لكل سؤال قيمة نقطية: <strong>200</strong> للسهل، <strong>400</strong> للمتوسط، <strong>600</strong> للصعب.</p>
+        </div>
+      </div>
+
+      <div class="rule-card">
+        <div class="rule-icon">🔄</div>
+        <div class="rule-body">
+          <h4>الأدوار</h4>
+          <p>تتناوب الفرق في اختيار الأسئلة، والفريق الذي يجيب صحيحاً يحصل على النقاط.</p>
+        </div>
+      </div>
+
+      <div class="rule-card">
+        <div class="rule-icon">🛟</div>
+        <div class="rule-body">
+          <h4>وسائل المساعدة</h4>
+          <p>لكل فريق وسائل مساعدة خاصة تُستخدم مرة واحدة فقط طوال المباراة.</p>
+        </div>
+      </div>
+
+      <div class="rule-card">
+        <div class="rule-icon">⏱️</div>
+        <div class="rule-body">
+          <h4>الوقت</h4>
+          <p>يُحتسب الوقت من لحظة ظهور السؤال، وينتهي الدور عند إغلاق السؤال.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- قسم وسائل المساعدة -->
+  <section class="lifelines-section">
+    <div class="section-label">🛟 وسائل المساعدة</div>
+    <div class="lifelines-grid">
+
+      <div class="lifeline-card">
+        <div class="lifeline-card-top">
+          <div class="lifeline-emoji">2×</div>
+          <div class="lifeline-name">دبل نقاطك</div>
+        </div>
+        <p class="lifeline-desc">عند الإجابة الصحيحة تُضاعَف نقاط السؤال الحالي فقط لصالح فريقك.</p>
+      </div>
+
+      <div class="lifeline-card">
+        <div class="lifeline-card-top">
+          <div class="lifeline-emoji">🤔</div>
+          <div class="lifeline-name">إجابتين</div>
+        </div>
+        <p class="lifeline-desc">يحق لفريقك تجربة إجابتين على نفس السؤال، مما يمنحك فرصة ثانية للإجابة الصحيحة.</p>
+      </div>
+
+      <div class="lifeline-card">
+        <div class="lifeline-card-top">
+          <div class="lifeline-emoji">🕳️</div>
+          <div class="lifeline-name">الحفرة</div>
+        </div>
+        <p class="lifeline-desc">عند الإجابة الصحيحة تُخصَم نقاط السؤال من رصيد جميع الفرق الأخرى في نفس الوقت.</p>
+      </div>
+
+      <div class="lifeline-card">
+        <div class="lifeline-card-top">
+          <div class="lifeline-emoji">⏳</div>
+          <div class="lifeline-name">مدد الوقت</div>
+        </div>
+        <p class="lifeline-desc">يتوقف المؤقت تماماً ويأخذ فريقك وقتاً مفتوحاً غير محدود للتفكير والإجابة.</p>
+      </div>
+
+      <div class="lifeline-card">
+        <div class="lifeline-card-top">
+          <div class="lifeline-emoji">🎭</div>
+          <div class="lifeline-name">سرقة الإجابة</div>
+        </div>
+        <p class="lifeline-desc">يستطيع فريقك أخذ إجابة فريق آخر واستخدامها لصالحك في السؤال الحالي.</p>
+      </div>
+
+      <div class="lifeline-card">
+        <div class="lifeline-card-top">
+          <div class="lifeline-emoji">📞</div>
+          <div class="lifeline-name">اتصال بصديق</div>
+        </div>
+        <p class="lifeline-desc">يُتاح لفريقك التواصل مع شخص خارج اللعبة لطلب المساعدة في الإجابة على السؤال.</p>
+      </div>
+
+      <div class="lifeline-card">
+        <div class="lifeline-card-top">
+          <div class="lifeline-emoji">🔄</div>
+          <div class="lifeline-name">تبديل السؤال</div>
+        </div>
+        <p class="lifeline-desc">يُستبدل السؤال الحالي بسؤال آخر من نفس الفئة وبنفس القيمة النقطية تلقائياً.</p>
+      </div>
+
+      <div class="lifeline-card">
+        <div class="lifeline-card-top">
+          <div class="lifeline-emoji">🤐</div>
+          <div class="lifeline-name">تسكيت فريق</div>
+        </div>
+        <p class="lifeline-desc">تمنع جميع الفرق الأخرى من المشاركة في الإجابة، ويصبح السؤال حكراً على فريقك.</p>
+      </div>
+
+      <div class="lifeline-card">
+        <div class="lifeline-card-top">
+          <div class="lifeline-emoji">⛔</div>
+          <div class="lifeline-name">إيقاف متسابق</div>
+        </div>
+        <p class="lifeline-desc">تُوقف أحد أعضاء الفريق المنافس عن المشاركة في الإجابة لمدة جولة واحدة كاملة.</p>
+      </div>
+
+      <div class="lifeline-card">
+        <div class="lifeline-card-top">
+          <div class="lifeline-emoji">⏱️</div>
+          <div class="lifeline-name">15 ثانية</div>
+        </div>
+        <p class="lifeline-desc">يُمنح الفريق 15 ثانية فقط للبحث عن الإجابة بأي وسيلة متاحة خارج اللعبة.</p>
+      </div>
+
+      <div class="lifeline-card">
+        <div class="lifeline-card-top">
+          <div class="lifeline-emoji">⌛</div>
+          <div class="lifeline-name">نصف الوقت</div>
+        </div>
+        <p class="lifeline-desc">يُقلَّص الوقت المتبقي للفريق الذي لديه الدور إلى نصفه، مما يضغط عليه للإجابة بسرعة.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- قسم الفئات -->
+  <section class="cats-section">
+    <div class="cats-section-header">
+      <div class="section-label">🗂️ فئات الأسئلة</div>
+      <div class="cats-count">عدد الفئات: <span id="catsCount">—</span></div>
+    </div>
+
+    <!-- حالة التحميل -->
+    <div id="loadingState" class="state-box">
+      <div class="state-icon">⏳</div>
+      <p>جاري تحميل الفئات...</p>
+    </div>
+
+    <!-- حالة الخطأ -->
+    <div id="errorState" class="state-box" style="display:none;">
+      <div class="state-icon">⚠️</div>
+      <p>تعذّر الاتصال بالخادم. تأكد من تشغيل الخادم ثم أعد تحميل الصفحة.</p>
+    </div>
+
+    <!-- الفئات -->
+    <div id="catsContainer" style="display:none;"></div>
+
+  </section>
+
+</main>
+
+<script>
+const API_URL = 'http://localhost:3001';
+
+document.addEventListener('DOMContentLoaded', loadCategories);
+
+async function loadCategories() {
+  try {
+    const [catsRes, settingsRes] = await Promise.all([
+      fetch(`${API_URL}/categories?for_game=true`),
+      fetch(`${API_URL}/settings/show_categories_with_groups`)
+    ]);
+
+    if (!catsRes.ok) throw new Error('فشل جلب الفئات');
+
+    const categories = await catsRes.json();
+    let showWithGroups = true;
+    if (settingsRes.ok) {
+      const s = await settingsRes.json();
+      showWithGroups = s.value === 'true';
+    }
+
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('catsCount').textContent = categories.length;
+
+    if (categories.length === 0) {
+      document.getElementById('errorState').style.display = 'block';
+      document.getElementById('errorState').querySelector('p').textContent =
+        'لا توجد فئات مضافة حتى الآن.';
+      document.getElementById('errorState').querySelector('.state-icon').textContent = '📭';
+      return;
+    }
+
+    renderCategories(categories, showWithGroups);
+
+  } catch (err) {
+    console.error(err);
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('errorState').style.display = 'block';
+  }
+}
+
+function renderCategories(categories, showWithGroups) {
+  const container = document.getElementById('catsContainer');
+  container.style.display = 'block';
+  container.innerHTML = '';
+
+  if (showWithGroups) {
+    // تجميع حسب التصنيف
+    const grouped = {};
+    categories.forEach(cat => {
+      const g = cat.group_name || 'بلا تصنيف';
+      if (!grouped[g]) grouped[g] = [];
+      grouped[g].push(cat);
+    });
+
+    Object.keys(grouped).forEach((groupName, gi) => {
+      const block = document.createElement('div');
+      block.className = 'group-block';
+      block.style.animationDelay = `${gi * 0.08}s`;
+
+      block.innerHTML = `
+        <div class="group-header">
+          <div class="group-name">📁 ${groupName}</div>
+          <div class="group-divider"></div>
+        </div>
+        <div class="cats-grid" id="group-grid-${gi}"></div>
+      `;
+      container.appendChild(block);
+
+      const grid = block.querySelector(`#group-grid-${gi}`);
+      grouped[groupName].forEach((cat, ci) => {
+        grid.appendChild(buildCatCard(cat, gi * 20 + ci));
+      });
+    });
+
+  } else {
+    // بدون تجميع
+    const grid = document.createElement('div');
+    grid.className = 'cats-grid';
+    categories.forEach((cat, ci) => grid.appendChild(buildCatCard(cat, ci)));
+    container.appendChild(grid);
+  }
+}
+
+function buildCatCard(cat, idx) {
+  const card = document.createElement('div');
+  card.className = 'cat-card';
+  card.style.animationDelay = `${0.05 + idx * 0.04}s`;
+
+  const imgHtml = cat.category_image
+    ? `<img src="${API_URL}/uploads/${cat.category_image}" alt="${cat.name}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=cat-img-placeholder>🗂️</div>'">`
+    : `<div class="cat-img-placeholder">🗂️</div>`;
+
+  const hasDesc = cat.description && cat.description.trim();
+
+  card.innerHTML = `
+    <div class="cat-img-wrap">${imgHtml}</div>
+    <div class="cat-name-bar"><h3>${cat.name}</h3></div>
+    <div class="cat-desc ${hasDesc ? '' : 'empty'}">
+      ${hasDesc ? cat.description : 'لا يوجد وصف لهذه الفئة'}
+    </div>
+  `;
+
+  return card;
+}
+</script>
+</body>
+</html>

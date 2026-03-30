@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موزع الفرق العشوائي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #f5e6d3;
+            --secondary-bg: #fffaf0;
+            --card-bg: #fff5e6;
+            --accent-color: #ff9800;
+            --accent-hover: #f57c00;
+            --text-light: #3e2723;
+            --text-dark: #8d6e63;
+            --border-color: #e8d4c4;
+            --shadow-warm: rgba(255, 152, 0, 0.15);
+            --danger-color: #f43f5e;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--primary-bg);
+            background-image:
+                radial-gradient(ellipse at 20% 20%, rgba(255,152,0,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 80%, rgba(255,152,0,0.06) 0%, transparent 60%);
+            color: var(--text-light);
+            min-height: 100vh;
+            padding: 30px 20px 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 6px;
+            animation: fadeInDown 0.7s ease both;
+        }
+
+        .subtitle {
+            color: var(--text-dark);
+            font-size: 1rem;
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeInDown 0.8s ease 0.1s both;
+        }
+
+        .container {
+            background: var(--secondary-bg);
+            padding: 36px 32px;
+            border-radius: 20px;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08), 0 2px 8px var(--shadow-warm);
+            width: 100%;
+            max-width: 680px;
+            direction: rtl;
+            animation: fadeIn 0.8s ease 0.2s both;
+        }
+
+        .input-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        textarea, input[type="number"] {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 15px;
+            resize: vertical;
+            background: var(--card-bg);
+            color: var(--text-light);
+            font-family: 'Cairo', sans-serif;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            outline: none;
+        }
+
+        textarea::placeholder {
+            color: var(--text-dark);
+            opacity: 0.7;
+        }
+
+        textarea:focus, input[type="number"]:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(255,152,0,0.12);
+        }
+
+        input[type="number"] {
+            max-width: 140px;
+            text-align: center;
+        }
+
+        .divider {
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-color), #ffcc00);
+            border-radius: 4px;
+            margin: 0 0 24px 0;
+        }
+
+        .distribute-btn {
+            background: var(--accent-color);
+            color: #fff;
+            padding: 16px 30px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.15rem;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            width: 100%;
+            font-family: 'Cairo', sans-serif;
+            box-shadow: 0 4px 16px rgba(255,152,0,0.3);
+            margin-top: 4px;
+        }
+
+        .distribute-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(255,152,0,0.4);
+        }
+
+        .distribute-btn:active {
+            transform: translateY(0);
+        }
+
+        /* ---- RESULTS ---- */
+        #results {
+            margin-top: 30px;
+        }
+
+        #results h2 {
+            color: var(--accent-color);
+            font-size: 1.4rem;
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .team-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            padding: 18px 20px;
+            margin-bottom: 16px;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            animation: slideUp 0.4s ease both;
+        }
+
+        .team-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px var(--shadow-warm);
+            border-color: var(--accent-color);
+        }
+
+        .team-card h3 {
+            color: var(--accent-color);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed var(--border-color);
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .team-card h3 .team-num {
+            background: var(--accent-color);
+            color: #fff;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .team-card ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .team-card ul li {
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .team-card ul li:hover {
+            background: var(--accent-color);
+            color: #fff;
+            border-color: var(--accent-color);
+        }
+
+        .error {
+            color: var(--danger-color);
+            background: rgba(244,63,94,0.08);
+            border: 1px solid rgba(244,63,94,0.25);
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        /* ---- BACK BUTTON ---- */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 22px;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            background: var(--secondary-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 8px 16px;
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.25s ease;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+            background: var(--card-bg);
+        }
+
+        /* ---- ANIMATIONS ---- */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 24px 16px; }
+            h1 { font-size: 1.7rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <a class="back-btn" href="index.html">&#8592; العودة للرئيسية</a>
+
+    <h1>موزع الفرق العشوائي 👥</h1>
+    <p class="subtitle">أدخل الأسماء وحدد عدد الفرق للتوزيع التلقائي</p>
+
+    <div class="container">
+        <div class="divider"></div>
+
+        <div class="input-group">
+            <label for="names">أدخل الأسماء (اسم واحد في كل سطر):</label>
+            <textarea id="names" rows="10" placeholder="مثال:
+أحمد
+فاطمة
+خالد
+سارة
+علي
+نورة"></textarea>
+        </div>
+
+        <div class="input-group">
+            <label for="numTeams">عدد الفرق المطلوبة:</label>
+            <input type="number" id="numTeams" min="2" value="2">
+        </div>
+
+        <button class="distribute-btn" onclick="distributeTeams()">وزع الفرق الآن 🚀</button>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        function distributeTeams() {
+            const namesInput = document.getElementById('names').value;
+            const numTeamsInput = document.getElementById('numTeams').value;
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+
+            let names = namesInput.split('\n').map(name => name.trim()).filter(name => name.length > 0);
+            const numTeams = parseInt(numTeamsInput);
+
+            if (names.length === 0) {
+                resultsDiv.innerHTML = '<p class="error">الرجاء إدخال قائمة بالأسماء.</p>';
+                return;
+            }
+            if (isNaN(numTeams) || numTeams < 2) {
+                resultsDiv.innerHTML = '<p class="error">الرجاء إدخال عدد صحيح للفرق (2 أو أكثر).</p>';
+                return;
+            }
+            if (numTeams > names.length) {
+                resultsDiv.innerHTML = '<p class="error">عدد الفرق لا يمكن أن يكون أكبر من عدد الأسماء.</p>';
+                return;
+            }
+
+            names = shuffle(names);
+            const teams = Array.from({ length: numTeams }, () => []);
+            for (let i = 0; i < names.length; i++) {
+                teams[i % numTeams].push(names[i]);
+            }
+
+            let htmlContent = '<h2>✅ نتائج التوزيع</h2>';
+            teams.forEach((team, index) => {
+                htmlContent += `
+                    <div class="team-card" style="animation-delay:${index * 0.08}s">
+                        <h3>
+                            <span class="team-num">${index + 1}</span>
+                            الفريق رقم ${index + 1}
+                            <span style="margin-right:auto;font-size:0.85rem;color:var(--text-dark);font-weight:400">${team.length} أعضاء</span>
+                        </h3>
+                        <ul>
+                            ${team.map(name => `<li>${name}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            });
+
+            resultsDiv.innerHTML = htmlContent;
+        }
+    </script>
+</body>
+</html>
