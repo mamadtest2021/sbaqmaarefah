@@ -7,7 +7,7 @@ const cors = require('cors');
 const XLSX = require('xlsx');
 
 const app = express();
-const PORT = 3001;  // منفذ مختلف لتجنب التضارب
+const PORT = process.env.PORT || 3001;
 
 // إعداد CORS
 app.use(cors());
