@@ -7,7 +7,7 @@ const cors = require('cors');
 const XLSX = require('xlsx');
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = 3001;  // منفذ مختلف لتجنب التضارب
 
 // إعداد CORS
 app.use(cors());
@@ -212,7 +212,7 @@ db.serialize(() => {
   )`);
 });
 
-console.log('✅ السيرفر شغال على http://localhost:' + PORT);
+
 
 // --- Routes for Category Groups (التصنيفات) ---
 app.get('/category-groups', async (req, res) => {
@@ -948,6 +948,9 @@ app.delete('/review-flags/:question_id', async (req, res) => {
   }
 });
 
+// Health check
+app.get('/health', (req, res) => res.send('OK'));
+
 // بدء الخادم
 app.listen(PORT, () => {
   console.log(`✅ السيرفر شغال على http://localhost:${PORT}`);
@@ -1109,4 +1112,3 @@ app.post('/import/categories', upload.single('file'), async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
